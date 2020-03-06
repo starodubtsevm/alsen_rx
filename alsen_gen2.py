@@ -1,0 +1,47 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+def proc_alsen(Fs, N, Code_alsen1, Code_alsen2):
+    Fcar = 174.89
+    fs = 16000
+    A =1
+    imp_duty_count = int((1/13.89)/(1/16000))
+    count_bit = 8
+    Byte1 = Code_alsen1
+    Byte2 = Code_alsen2
+    diBit = 0
+    phase = 0
+    d_phase = 0
+    y_res = []
+
+    for i in range(N):
+        if imp_duty_count < int((1/13.89)/(1/16000)):
+            imp_duty_count=imp_duty_count+1
+        else:
+            imp_duty_count=0
+            if count_bit==0:
+                count_bit=8
+                Byte1=Code_alsen1
+                Byte2=Code_alsen2
+            diBit=((Byte1 & 0x80)>>6)+((Byte2 & 0x80)>>7)
+            if diBit == 0:
+                d_phase = np.pi*0
+            elif diBit == 1:
+                d_phase = np.pi/2
+            elif diBit == 3:
+                d_phase = np.pi
+            elif diBit == 2:
+                d_phase = 3/2*np.pi
+            phase = phase + d_phase
+            if phase > 2*np.pi:
+                phase -= 2*np.pi
+            #print (diBit,Byte1,Byte2,phase)
+            Byte1=Byte1<<1
+            Byte2=Byte2<<1
+            count_bit=count_bit-1
+         
+        f = A*np.sin(2*np.pi*Fcar*1/fs*i+phase)
+        y_res.append(f)
+    return y_res
+
