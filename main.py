@@ -9,7 +9,9 @@ from pll2 import*
 from decode import*
 
 start_time1 = time.clock()
-
+counter_total = 0
+counter_suc =0
+first_suc_byte_flag = 0
 #*--буферы для построения графиков---------------------------------------------
 buf_gen0 =[]
 buf_gen90 = []
@@ -26,6 +28,8 @@ pll_err_buf0 = []
 pll_buf90 = []
 pll_err_buf90 = []
 
+print_buff0 = []
+print_buff90 = []
 #*--------------------------------------------------------------------------
 
 #*--генерация тестового сигнала АЛС-ЕН (в буфер)------------------------------
@@ -69,7 +73,7 @@ decoder90 = decode()
 #*--------------------------------------------------------------------------
 #*--конец инициализации узлов приемника---------------------------------------
 
-to_plot =True
+to_plot = False
 
 start_time2 = time.clock()
 
@@ -129,41 +133,74 @@ for i in range (len(t)): # главный цикл приемника
 #*--------------------------------------------------------------------------
 
 #*--Декодеры (прием байтов)-------------------------------------------------
-        buff = ["кан0 ","кан90 "]
-
+       
         if sync0 == 1:
-            dec0,string0 = decoder0.proc(bit0)
+            counter_total+=1
+            dec0,s0 = decoder0.proc(bit0)
             #выходной сигнал декодера канала 0 
-            buff.insert(1, string0)
+            print_buff0.append(str(s0))
             if dec0 == 1:
-                buff.insert(2,"  gotcha!  ")
+                if first_suc_byte_flag == 0:
+                    t_reaction = 1/fs * i
+                    first_suc_byte_flag = 1
+                counter_suc+=1
+                print_buff0.append("\x1b[32m  gotcha!  \x1b[0m")
             else:
-                buff.insert(2,"  missing  ")
+                print_buff0.append("\x1b[31m missing \x1b[0m")
 
         if sync90 == 1:
-            dec90,string90 = decoder90.proc(bit90)
+            dec90,s90 = decoder90.proc(bit90)
             #выходной сигнал декодера канала 90 
-            buff.insert(4, string90)
-            
+            print_buff90.append(str(s90))
             if dec90 == 1:
-                 buff.insert(5,"  gotcha!  ")
+                print_buff90.append("\x1b[32m  gotcha!  \x1b[0m")
             else:
-                 buff.insert(5,"  missing  ")
-            print(str(buff))
+                print_buff90.append("\x1b[31m missing \x1b[0m")
+
 #*--------------------------------------------------------------------------
 
 time1 = (time.clock() - start_time1)
 time2 = (time.clock() - start_time2)
 
+
+if len(print_buff90) == len(print_buff0):
+    lenght = len(print_buff0)
+elif len(print_buff90)>len(print_buff0):
+    lenght = len(print_buff0)
+elif len(print_buff90)<len(print_buff0):
+    lenght = len(print_buff90)
+
+for i in range(0,lenght,2):
+    print('кан0:{}{}кан90: {}{}\n'.format(str(print_buff0[i]), \
+    str(print_buff0[i+1]), str(print_buff90[i]),str(print_buff90[i+1])))
+    print ("-"*80)
+print ("\n")
 print ("*----------------------------------------------------------------*")
 print ("на ветке develop")
-print ("Частота сэемплирования на входе " + str(fs) +" Hz")
-print ("Частота сэмплирования после интеграторов " + str(Fs)  +" Hz")
 print ("*----------------------------------------------------------------*")
-print ("время симуляции   " + str(T) +" сек.")
-print("время выполнения основного цикла "+ str ('{:.2f}'.format(time2))+ " сек.")
-print("общее время выполнения "+ str ('{:.2f}'.format(time1))+ " сек.")
+print ("Частота сэмплирования на входе " + "\x1b[32m"+\
+                              str(fs) +"\x1b[0m" +" Hz")
+print ("Частота сэмплирования после интеграторов " + "\x1b[32m"+\
+                               str(Fs) +"\x1b[0m" +" Hz")
 print ("*----------------------------------------------------------------*")
+print ("время симуляции   "+"\x1b[32m"+ str(T)+"\x1b[0m"+" сек.")
+time2 = str('{:.2f}'.format(time2))
+print("время выполнения основного цикла " + "\x1b[32m"+\
+                                          str(time2)+"\x1b[0m" + " сек.")
+time1 = str('{:.2f}'.format(time1))
+print("общее время выполнения " + "\x1b[32m"\
+                                        + str(time1)+"\x1b[0m" + " сек.")
+print ("*----------------------------------------------------------------*")
+print ("Всего передано бит " + "\x1b[32m"+\
+                              str(counter_total) +"\x1b[0m")
+print ("Верно принятых бит " + "\x1b[32m"+\
+                               str(counter_suc) +"\x1b[0m")
+print ("*----------------------------------------------------------------*")
+
+print ("Задержка приема первого байта " + "\x1b[32m"+\
+                               str(t_reaction) +"\x1b[0m" + " сек.")
+print ("*----------------------------------------------------------------*")
+
 
 #*--построение графиков-------------------------------------------------
 if to_plot == True:

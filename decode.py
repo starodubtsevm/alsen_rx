@@ -8,10 +8,12 @@ class decode(object):
         self.string  = [0] * 8 
 
     def proc(self,bit):
-
+        '''Сравнение битовой последовательности '''
         self.string.insert(8, bit)
         self.string.pop(0)
+        s = self.string
         if self.string in array2C:
-            return 1, self.string
+            res = 1
         else:
-            return 0, self.string
+            res = 0
+        return res,s
