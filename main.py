@@ -7,13 +7,15 @@ from alsen_rx import*
 from alsen_gen2 import*
 from pll2 import*
 from decode import*
+from noise_gen import*
 
 start_time1 = time.clock()
 counter_total = 0
 counter_suc =0
 first_suc_byte_flag = 0
 #*--буферы для построения графиков---------------------------------------------
-buf_gen0 =[]
+sig = []
+buf_gen0 = []
 buf_gen90 = []
 buf_mux1_0 = []
 buf_mux1_90 = []
@@ -35,8 +37,21 @@ print_buff90 = []
 #*--генерация тестового сигнала АЛС-ЕН (в буфер)------------------------------
 Code_alsen1 = 0x2C
 Code_alsen2 = 0x2C
-sig =[]
-sig = proc_alsen(fs, len(t), Code_alsen1, Code_alsen2)
+signal =[]
+signal = proc_alsen(fs, len(t), Code_alsen1, Code_alsen2)
+
+#*--------------------------------------------------------------------------
+
+#*--генерация шума (в буфер)-------------------------------------------------
+noise = []
+noise = proc_noise(len(t))
+
+#*--------------------------------------------------------------------------
+
+#*--сложение входного сигнала и шума-----------------------------------------
+for i in range (len(t)):
+    sig.append(signal[i] + noise[i])
+
 #*--------------------------------------------------------------------------
 
 #*--создание узлов приемника ------------------------------------------------
@@ -47,21 +62,23 @@ rx.fs = fs #частота дискретизации
 rx.bit_rate = 13.89 #скорость передачи данных
 
 #*--фильтр-интегратор канала 0------------------------------------------------
-flt_iir1 = IIR2Filter(4, [13], 'low',design='cheby1',rs = 1, fs=fs)
-#flt_fir1 = FIR2Filter(255, 1,15,fs=fs)
+#flt_iir1 = IIR2Filter(4, [13], 'low',design='cheby1',rs = 1, fs=fs)
+flt_fir1 = FIR2Filter(255, 1,15,fs=fs)
 
 #*--фильтр-интегратор канала 90------------------------------------------------
-flt_iir2 = IIR2Filter(4, [13], 'low',design='cheby1',rs = 1, fs=fs)
-#flt_fir2 = FIR2Filter(255, 1,15, fs=fs)
+#flt_iir2 = IIR2Filter(4, [13], 'low',design='cheby1',rs = 1, fs=fs)
+flt_fir2 = FIR2Filter(255, 1,15, fs=fs)
 
 #*--ФАПЧ канала 0-------------------------------------------------------------
 pll0 = pll2()
 pll0.scale_fs = 70
+pll0.sign_moment = 3.5
 pll0.Fs = Fs
 
 #*--ФАПЧ канала 90-------------------------------------------------------------
 pll90 = pll2()
 pll90.scale_fs = 70
+pll90.sign_moment = 3.5
 pll90.Fs = Fs
 
 #*--Декодер канала 0----------------------------------------------------------
@@ -73,7 +90,7 @@ decoder90 = decode()
 #*--------------------------------------------------------------------------
 #*--конец инициализации узлов приемника---------------------------------------
 
-to_plot = False
+to_plot = True
 
 start_time2 = time.clock()
 
@@ -95,10 +112,10 @@ for i in range (len(t)): # главный цикл приемника
 #*--------------------------------------------------------------------------
 
 #*--фильтры -интеграторы-----------------------------------------------------
-    y0_afterlpf1 = flt_iir1.filter(y0_aftermux1)
-    y90_afterlpf1 = flt_iir2.filter(y90_aftermux1)
-    #y0_afterlpf1 = flt_fir1.filter(y0_aftermux1)
-    #y90_afterlpf1 = flt_fir2.filter(y90_aftermux1)
+    #y0_afterlpf1 = flt_iir1.filter(y0_aftermux1)
+    #y90_afterlpf1 = flt_iir2.filter(y90_aftermux1)
+    y0_afterlpf1 = flt_fir1.filter(y0_aftermux1)
+    y90_afterlpf1 = flt_fir2.filter(y90_aftermux1)
     buf_lpf1_0.append(y0_afterlpf1)
     buf_lpf1_90.append(y90_afterlpf1)
 

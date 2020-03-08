@@ -5,7 +5,7 @@ from const import*
 
 def proc_alsen(Fs, N, Code_alsen1, Code_alsen2):
     Fcar = 174.89
-    A =1
+    A =1 * A_input
     imp_duty_count = int((1/fmod)/(1/fs))
     count_bit = 8
     Byte1 = Code_alsen1

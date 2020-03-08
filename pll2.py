@@ -17,6 +17,7 @@ class pll2(object):
         self.Fs = Fs
         self.scale_fs = 80
         self.__corr = Fs/self.scale_fs
+        self.sign_moment = 3.5
 
     def proc (self,sample):
 
@@ -34,7 +35,7 @@ class pll2(object):
             self.syncro = 0
             return self.syncro,self.phErr,self.sample
         else:
-            self.phErr = self.phErrCount - LEN_OF_BIT/3
+            self.phErr = self.phErrCount - LEN_OF_BIT/self.sign_moment
             if (abs(self.phErr) >= LEN_OF_BIT * 3 / 200):
                 if(abs(self.phErr) >= LEN_OF_BIT * 3 / 50):
                     if(self.receiveFlag == 1):
