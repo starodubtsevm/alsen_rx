@@ -138,24 +138,26 @@ for i in range (len(t)): # главный цикл приемника
             counter_total+=1
             dec0,s0 = decoder0.proc(bit0)
             #выходной сигнал декодера канала 0 
+            print_buff0.append(str('{:.2f}'.format(1.0/fs*i)))
             print_buff0.append(str(s0))
             if dec0 == 1:
                 if first_suc_byte_flag == 0:
                     t_reaction = 1/fs * i
                     first_suc_byte_flag = 1
                 counter_suc+=1
-                print_buff0.append("\x1b[32m  gotcha!  \x1b[0m")
+                print_buff0.append("\x1b[32m  ok!  \x1b[0m")
             else:
-                print_buff0.append("\x1b[31m missing \x1b[0m")
+                print_buff0.append("\x1b[31m not ok \x1b[0m")
 
         if sync90 == 1:
             dec90,s90 = decoder90.proc(bit90)
             #выходной сигнал декодера канала 90 
+            print_buff90.append(str('{:.2f}'.format(1.0/fs*i)))
             print_buff90.append(str(s90))
             if dec90 == 1:
-                print_buff90.append("\x1b[32m  gotcha!  \x1b[0m")
+                print_buff90.append("\x1b[32m  ok!  \x1b[0m")
             else:
-                print_buff90.append("\x1b[31m missing \x1b[0m")
+                print_buff90.append("\x1b[31m not ok \x1b[0m")
 
 #*--------------------------------------------------------------------------
 
@@ -170,12 +172,14 @@ elif len(print_buff90)>len(print_buff0):
 elif len(print_buff90)<len(print_buff0):
     lenght = len(print_buff90)
 
-for i in range(0,lenght,2):
-    print('кан0:{}{}кан90: {}{}\n'.format(str(print_buff0[i]), \
-    str(print_buff0[i+1]), str(print_buff90[i]),str(print_buff90[i+1])))
-    print ("-"*80)
+for i in range(0,lenght,3):
+    print('{}c. кан0:{}{}{}c. кан90: {}{}\n'.format(print_buff0[i],\
+    str(print_buff0[i+1]), str(print_buff0[i+2]),\
+    print_buff90[i],str(print_buff90[i+1]), str(print_buff90[i+2])))
+    print ("~" * 86)
 print ("\n")
 print ("*----------------------------------------------------------------*")
+
 print ("на ветке develop")
 print ("*----------------------------------------------------------------*")
 print ("Частота сэмплирования на входе " + "\x1b[32m"+\
