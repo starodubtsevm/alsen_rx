@@ -15,7 +15,7 @@ class fir(object):
 		else:
 			self._data.append(sample)
 		self.index= (self.index + 1) % self.size
-		acc = 0	# accumulator
+		acc = 0 # accumulator
 		indx = self.index
 
 		for j in range (self.size):

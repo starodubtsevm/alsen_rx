@@ -1,12 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from const import*
 
 
 def proc_alsen(Fs, N, Code_alsen1, Code_alsen2):
     Fcar = 174.89
-    fs = 16000
     A =1
-    imp_duty_count = int((1/13.89)/(1/16000))
+    imp_duty_count = int((1/fmod)/(1/fs))
     count_bit = 8
     Byte1 = Code_alsen1
     Byte2 = Code_alsen2
@@ -16,7 +16,7 @@ def proc_alsen(Fs, N, Code_alsen1, Code_alsen2):
     y_res = []
 
     for i in range(N):
-        if imp_duty_count < int((1/13.89)/(1/16000)):
+        if imp_duty_count < int((1/fmod)/(1/fs)):
             imp_duty_count=imp_duty_count+1
         else:
             imp_duty_count=0

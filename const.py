@@ -1,15 +1,15 @@
 import numpy as np
 
 #--------------------------------------
-fs = 16000.0	# sample freq in Hz
-#fn = fs/2
-#t_sim = 3 	# Simulation time in sec
+fs = 8000 #частота дискретизации
+D = 10
+Fs = fs/D
+T = 3 # время симуляции, сек
+t = np.arange(0.0, T, 1/fs) # дискреты времени
+td = np.arange(0.0, T, 1/fs*D) # дискреты времени
 fmod    = 13.89	 # Modulation freq in Hz (Bod)
-#fsignal = 1475	 # Generator freq in Hz
 #--------------------------------------
 
-LEN_OF_BIT = int(fs/fmod)
-#sim_point = int(t_sim/(1.0/fs)) 
-#t = np.linspace(0, t_sim, sim_point) 
+LEN_OF_BIT = int(Fs/fmod)
 
 

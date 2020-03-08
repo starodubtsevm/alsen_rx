@@ -1,13 +1,14 @@
 import numpy   as np
-from IIR2Filter import *
+from const import*
+
 
 class alsen_rx(object):
    '''Приемник сигналов АЛСЕН'''
    def __init__(self):
       '''Инициализация'''
-      self.fs = 16000
       self.Fcar = 174.89 # несущая АЛС-ЕН
-      self.bit_rate = 13.89
+      self.bit_rate = fmod
+      self.fs = fs
       self.A = 1
       self.k = 2 * np.cos(2 * np.pi * self.Fcar / self.fs)
 
@@ -15,12 +16,12 @@ class alsen_rx(object):
       self.X1_0 = 0
       self.X2_0 = self.A * np.sin(2 * np.pi * self.Fcar / self.fs)
 
-      self.X0_90 = -1
+      self.X0_90 = 0
       self.X1_90 = 0
       self.X2_90 = self.A * np.sin(2 * np.pi * self.Fcar / self.fs)
       self.cycle_count = 0
 
-      self._buff_size = int((1/self.bit_rate)/(1/self.fs))
+      self._buff_size = int((1/self.bit_rate)/(1/self.fs)/D)
       self._data0 = [0]*self._buff_size
       self._data90 = [0]*self._buff_size
 
@@ -44,11 +45,10 @@ class alsen_rx(object):
 
       return y_0, y_90
 
-   def mux1(self,gen0,gen90,x):
+   def mux1(self,gen,x):
       '''Входные перемножители'''
-      y0 = x * gen0
-      y90 = x * gen90
-      return y0, y90
+      y = x * gen
+      return y
 
    def diff_decode(self,x0,x90):
       '''Дифференциальный декодер'''
