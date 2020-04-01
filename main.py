@@ -15,6 +15,7 @@ start_time1 = time.clock()
 counter_total = 0
 counter_suc =0
 first_suc_byte_flag = 0
+t_reaction = 0
 #*--буферы для построения графиков---------------------------------------------
 sig = []
 buf_gen0 = []
@@ -37,7 +38,7 @@ print_buff90 = []
 #*--------------------------------------------------------------------------
 
 #*--генерация тестового сигнала АЛС-ЕН (в буфер)------------------------------
-Code_alsen1 = 0x2C
+Code_alsen1 = 0x01
 Code_alsen2 = 0x2C
 signal =[]
 signal = proc_alsen(fs, len(t), Code_alsen1, Code_alsen2)
@@ -69,7 +70,7 @@ s_n = str('{:.2f}'.format(s_n))
 rx = alsen_rx() #экземпляр приемника
 rx.Fcar = 174.89 # частота несущей
 rx.fs = fs #частота дискретизации
-rx.bit_rate = 13.89 #скорость передачи данных
+rx.bit_rate = 12.89 #скорость передачи данных
 
 #*--фильтр-интегратор канала 0------------------------------------------------
 flt_iir1 = IIR2Filter(4, [13], 'low',design='cheby1',rs = 1, fs=fs)
@@ -82,13 +83,13 @@ flt_iir2 = IIR2Filter(4, [13], 'low',design='cheby1',rs = 1, fs=fs)
 #*--ФАПЧ канала 0-------------------------------------------------------------
 pll0 = pll2()
 pll0.scale_fs = 70
-pll0.sign_moment = 3.5
+pll0.sign_moment = 4.5
 pll0.Fs = Fs
 
 #*--ФАПЧ канала 90-------------------------------------------------------------
 pll90 = pll2()
 pll90.scale_fs = 70
-pll90.sign_moment = 3.5
+pll90.sign_moment = 4.5
 pll90.Fs = Fs
 
 #*--Декодер канала 0----------------------------------------------------------
@@ -198,7 +199,10 @@ elif len(print_buff90)>len(print_buff0):
     lenght = len(print_buff0)
 elif len(print_buff90)<len(print_buff0):
     lenght = len(print_buff90)
+else:
+    pass
 
+    pass
 for i in range(0,lenght,3):
     print('{}c. кан0:{}{}{}c. кан90: {}{}\n'.format(print_buff0[i],\
     str(print_buff0[i+1]), str(print_buff0[i+2]),\
@@ -244,28 +248,30 @@ if to_plot == True:
 
     ax1 = plt.subplot(511)
     ax2 = plt.subplot(512, sharex=ax1)
-    ax3 = plt.subplot(513, sharex=ax1, sharey=ax2)
+    ax3 = plt.subplot(513, sharex=ax1)
     ax4 = plt.subplot(514, sharex=ax1)
     ax5 = plt.subplot(515, sharex=ax1)
 
     ax1.plot(t,sig)
+    #ax1.plot(t,buf_gen0)
+    #ax1.plot(t,buf_gen90)
     ax1.grid(True)
 
-    ax2.plot(td,pll_buf0)
-    ax2.plot(td,buf_y9)
+    ax2.plot(t,buf_lpf1_90)
+    #ax2.plot(t,buf_mux1_90)
     ax2.grid(True)
 
-    ax3.plot(td,pll_buf90)
-    ax3.plot(td,buf_y10)
+    ax2.plot(t,buf_lpf1_0)
+    #ax2.plot(t,buf_mux1_0)
+    ax2.grid(True)
+
+    ax3.plot(td,pll_buf0)
+    ax3.plot(td,buf_y9)
     ax3.grid(True)
 
-    ax4.plot(t,buf_lpf1_0)
-    #ax4.plot(t,buf_mux1_0)
+    ax4.plot(td,pll_buf90)
+    ax4.plot(td,buf_y10)
     ax4.grid(True)
-
-    ax5.plot(t,buf_lpf1_90)
-    #ax5.plot(t,buf_mux1_90)
-    ax5.grid(True)
 
     plt.show()
 #*--------------------------------------------------------------------------

@@ -12,7 +12,7 @@ class decode(object):
         self.string.insert(8, bit)
         self.string.pop(0)
         s = self.string
-        if self.string in array2C:
+        if self.string in array:
             res = 1
         else:
             res = 0
