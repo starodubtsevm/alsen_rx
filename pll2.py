@@ -4,9 +4,12 @@ from const import *
 class pll2(object):
 
     def __init__(self):
-        """initialization"""
+        """initialization
+        :rtype:
+        """
 
         self.syncCount = LEN_OF_BIT
+        #print(self.syncCount)
         self.phErrCount = 0
         self.phErr = 0
         self.syncro = 0
@@ -15,14 +18,18 @@ class pll2(object):
         self.frontDet = 0
         self.sample = 0
         self.Fs = Fs
+        #print(self.Fs)
         self.scale_fs = 80
+        #print(self.scale_fs)
         self.__corr = Fs/self.scale_fs
+        #print(self.__corr)
         self.sign_moment = 3.5
 
     def proc (self,sample):
 
         """find edge """
         self.sample = sample
+        #print(self.sample)
         self.frontDet = self.frontDet << 1
         self.frontDet |= self.sample
 
