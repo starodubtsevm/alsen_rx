@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import time
-from IIR2Filter import IIR2Filter
+import IIR2Filter
 # from FIR2Filter import *
 from alsen_rx import alsen_rx
 from alsen_gen2 import proc_alsen
@@ -39,8 +39,9 @@ print_buff90 = []
 # *--------------------------------------------------------------------------
 
 # генерация тестового сигнала АЛС-ЕН (в буфер)
-Code_alsen1 = 0x2C
+Code_alsen1 = 0x32
 Code_alsen2 = 0x2C
+print('Code_alsen1 = {}; Code_alsen2 = {}'.format(hex(Code_alsen1).upper(),hex(Code_alsen2).upper()))
 # signal = []
 signal = proc_alsen(fs, len(t), Code_alsen1, Code_alsen2)
 sig_rms = rms(signal)
@@ -58,7 +59,7 @@ noise_rms = rms(noise)
 
 # сложение входного сигнала и шума
 for i in range(len(t)):
-    sig.append(signal[i] + noise[i])
+    sig.append(signal[i])# + noise[i])
 
 # *--------------------------------------------------------------------------
 
@@ -76,14 +77,14 @@ rx.fs = fs           # частота дискретизации
 rx.bit_rate = 12.89  # скорость передачи данных
 
 # фильтр-интегратор канала 0
-flt_iir1 = IIR2Filter(4, [13], 'low', design='cheby1', rs=1, fs=fs)
+flt_iir1 = IIR2Filter.IIR2Filter(4, [13], 'low', design='cheby1', rs=1, fs=fs)
 # flt_fir1 = FIR2Filter(255, 1,15,fs=fs)
 #print("Коэффициенты flt_iir1")
 #print(flt_iir1.COEFFS)
 #print(len(flt_iir1.COEFFS))
 
 # фильтр-интегратор канала 90
-flt_iir2 = IIR2Filter(4, [13], 'low', design='cheby1', rs=1, fs=fs)
+flt_iir2 = IIR2Filter.IIR2Filter(4, [13], 'low', design='cheby1', rs=1, fs=fs)
 # flt_fir2 = FIR2Filter(255, 1,15, fs=fs)
 #print("Коэффициенты flt_iir2")
 #print(flt_iir2.COEFFS)
@@ -110,7 +111,7 @@ decoder90 = decode()
 # *--------------------------------------------------------------------------
 # конец инициализации узлов приемника
 
-to_plot = True
+to_plot = False
 
 start_time2 = time.process_time()
 
@@ -169,28 +170,52 @@ for i in range(len(t)):  # главный цикл приемника
        
         if sync0 == 1:
             counter_total += 1
-            dec0,s0 = decoder0.proc(bit0)
+            dec0,s0,byte,base = decoder0.procNew(bit0,Code_alsen2)
             # выходной сигнал декодера канала 0
-            print_buff0.append(str('{:.2f}'.format(1.0/fs * i)))
-            print_buff0.append(str(s0))
+            #print_buff0.append(str('{:.2f}'.format(1.0/fs * i)))
+            #print_buff0.append(str(s0))
             if dec0 == 1:
                 if first_suc_byte_flag == 0:
                     t_reaction = 1/fs * i
                     first_suc_byte_flag = 1
                 counter_suc += 1
-                print_buff0.append("\x1b[32m  ok!  \x1b[0m")
+                print('{}c. кан0 :{} Code: {} Byte: {}; Base: {} {}'.format(str('{:.2f}'.format(1.0/fs * i)),
+                                                                   str(s0),
+                                                                   str(hex(Code_alsen2)),
+                                                                   str(byte),
+                                                                   str(base),
+                                                                   "\x1b[32m  ok!  \x1b[0m"))
+                #print_buff0.append("\x1b[32m  ok!  \x1b[0m")
             else:
-                print_buff0.append("\x1b[31m not ok \x1b[0m")
+                print('{}c. кан0 :{} Code: {} Byte: {}; Base: {} {}'.format(str('{:.2f}'.format(1.0 / fs * i)),
+                                                                str(s0),
+                                                                str(hex(Code_alsen2)),
+                                                                str(byte),
+                                                                str(base),
+                                                                "\x1b[31m not ok \x1b[0m"))
+                #print_buff0.append("\x1b[31m not ok \x1b[0m")
 
         if sync90 == 1:
-            dec90,s90 = decoder90.proc(bit90)
+            dec90,s90,byte,base = decoder90.procNew(bit90,Code_alsen1)
             # выходной сигнал декодера канала 90
             print_buff90.append(str('{:.2f}'.format(1.0/fs * i)))
             print_buff90.append(str(s90))
             if dec90 == 1:
-                print_buff90.append("\x1b[32m  ok!  \x1b[0m")
+                print('{}c. кан90:{} Code: {} Byte: {}; Base: {} {}'.format(str('{:.2f}'.format(1.0 / fs * i)),
+                                                                   str(s90),
+                                                                   str(hex(Code_alsen1)),
+                                                                   str(byte),
+                                                                   str(base),
+                                                                   "\x1b[32m  ok!  \x1b[0m"))
+                #print_buff90.append("\x1b[32m  ok!  \x1b[0m")
             else:
-                print_buff90.append("\x1b[31m not ok \x1b[0m")
+                print('{}c. кан90:{} Code: {} Byte: {}; Base: {} {}'.format(str('{:.2f}'.format(1.0 / fs * i)),
+                                                                   str(s90),
+                                                                   str(hex(Code_alsen1)),
+                                                                   str(byte),
+                                                                   str(base),
+                                                                   "\x1b[31m not ok \x1b[0m"))
+                #print_buff90.append("\x1b[31m not ok \x1b[0m")
 
 # *--------------------------------------------------------------------------
 
@@ -210,17 +235,13 @@ else:
 
     pass
 
-print('Code_alsen1 = {}; Code_alsen2 = {}'.format(hex(Code_alsen1).upper(),hex(Code_alsen2).upper()))
+#for i in range(0,lenght,3):
+#    print('{}c. кан0:{}{}{}c. кан90: {}{}\n'.format(print_buff0[i],str(print_buff0[i+1]), str(print_buff0[i+2]),print_buff90[i],str(print_buff90[i+1]), str(print_buff90[i+2])))
+#    print ("~" * 86)
+#print ("\n")
+#print ("*----------------------------------------------------------------*")
 
-for i in range(0,lenght,3):
-    print('{}c. кан0:{}{}{}c. кан90: {}{}\n'.format(print_buff0[i],\
-    str(print_buff0[i+1]), str(print_buff0[i+2]),\
-    print_buff90[i],str(print_buff90[i+1]), str(print_buff90[i+2])))
-    print ("~" * 86)
-print ("\n")
-print ("*----------------------------------------------------------------*")
-
-print ("на ветке develop")
+print ("\nна ветке develop")
 print ("*----------------------------------------------------------------*")
 print ("Частота сэмплирования на входе " + "\x1b[32m"+\
                               str(fs) +"\x1b[0m" +" Hz")
