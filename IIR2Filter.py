@@ -98,7 +98,6 @@ class IIR2Filter(object):
             self.COEFFS = signal.cheby1(order,rp,cutoff,filterType,output='sos')
         elif design == 'cheby2' and self.isThereAnError == 0:
             self.COEFFS = signal.cheby2(order,rs,cutoff,filterType,output='sos')
-        #print (fs)
         return self.COEFFS
 
     def __init__(self,order,cutoff,filterType,design='butter',rp=1,rs=1,fs=0):
@@ -109,8 +108,6 @@ class IIR2Filter(object):
         self.buffer2 = np.zeros(len(self.COEFFS))
         self.input = 0
         self.output = 0
-
-
 
     def filter(self,input):
 
