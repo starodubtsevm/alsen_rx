@@ -47,6 +47,7 @@ class alsen_rx(object):
 
    def mux1(self,gen,x):
       '''Входные перемножители'''
+      #print("gen = {} x = {}".format(gen,x))
       y = x * gen
       return y
 

@@ -39,8 +39,8 @@ print_buff90 = []
 # *--------------------------------------------------------------------------
 
 # генерация тестового сигнала АЛС-ЕН (в буфер)
-Code_alsen1 = 0x32
-Code_alsen2 = 0x2C
+Code_alsen1 = 0x2C
+Code_alsen2 = 0x32
 print('Code_alsen1 = {}; Code_alsen2 = {}'.format(hex(Code_alsen1).upper(),hex(Code_alsen2).upper()))
 # signal = []
 signal = proc_alsen(fs, len(t), Code_alsen1, Code_alsen2)
@@ -111,7 +111,7 @@ decoder90 = decode()
 # *--------------------------------------------------------------------------
 # конец инициализации узлов приемника
 
-to_plot = False
+to_plot = True
 
 start_time2 = time.process_time()
 
@@ -119,6 +119,9 @@ for i in range(len(t)):  # главный цикл приемника
 
 # локальный генератор sin и cos
     gen0, gen90 = rx.local_gen(t)
+    #if i < 5:
+    #    print("gen0 {}".format(gen0))
+    #    print("gen90 {}".format(gen90))
     buf_gen0.append(gen0)
     buf_gen90.append(gen90)
 
@@ -127,6 +130,9 @@ for i in range(len(t)):  # главный цикл приемника
 # входные перемножители
     y0_aftermux1 = rx.mux1(gen0, sig[i])
     y90_aftermux1 = rx.mux1(gen90, sig[i])
+    #if i < 5:
+    #    print("y0_aftermux1 {}".format(y0_aftermux1))
+    #    print("y90_aftermux1 {}".format(y90_aftermux1))
     buf_mux1_0.append(y0_aftermux1)
     buf_mux1_90.append(y90_aftermux1)
 
@@ -135,6 +141,9 @@ for i in range(len(t)):  # главный цикл приемника
 # фильтры - интеграторы
     y0_afterlpf1 = flt_iir1.filter(y0_aftermux1)
     y90_afterlpf1 = flt_iir2.filter(y90_aftermux1)
+    #if i < 5:
+    #    print("y0_afterlpf1 {}".format(y0_afterlpf1))
+    #    print("y90_afterlpf1 {}".format(y90_afterlpf1))
     buf_lpf1_0.append(y0_afterlpf1)
     buf_lpf1_90.append(y90_afterlpf1)
 
@@ -143,6 +152,9 @@ for i in range(len(t)):  # главный цикл приемника
 # дифференциальный декодер
     if i % D == 0:
         y7,y8 = rx.diff_decode(y0_afterlpf1, y90_afterlpf1)
+        #if i < 60:
+        #    print("y7 {}".format(y7))
+        #    print("y8 {}".format(y8))
         buf_y7.append(y7)
         buf_y8.append(y8)
 # *--------------------------------------------------------------------------
@@ -150,6 +162,9 @@ for i in range(len(t)):  # главный цикл приемника
 # функции sgn-(компараторы)
         y9 = rx.sgn(y7)
         y10 = rx.sgn(y8)
+        #if i < 60:
+        #    print("y9 {}".format(y10))
+        #    print("y9 {}".format(y10))
         buf_y9.append(y9)   # выходной сигнал канала 0
         buf_y10.append(y10) # выходной сигнал канала 90
 
@@ -157,13 +172,21 @@ for i in range(len(t)):  # главный цикл приемника
 
 # ФАПЧ
         sync0,err0,bit0 = pll0.proc(y9) # выходной сигнал ФАПЧ канал 0
+        #if i % 60==0:
+        #    print("sync0 {}".format(sync0))
+        #    print("bit0 {}".format(bit0))
         pll_buf0.append(sync0)
         pll_err_buf0.append(err0)
         #print (sync0,err0,bit0)
         
         sync90,err90,bit90 = pll90.proc(y10) # выходной сигнал ФАПЧ канал 90
+        #if i % 60==0:
+        #    print("sync90 {}".format(sync90))
+        #    print("bit90 {}".format(bit90))
+        #    print("({})___________________________________________".format(i))
         pll_buf90.append(sync90)
         pll_err_buf90.append(err90)
+
 #*--------------------------------------------------------------------------
 
 # Декодеры (прием байтов)
@@ -276,32 +299,58 @@ print ("*----------------------------------------------------------------*")
 # построение графиков
 if to_plot is True:
 
-    ax1 = plt.subplot(511)
-    ax2 = plt.subplot(512, sharex=ax1)
-    ax3 = plt.subplot(513, sharex=ax1)
-    ax4 = plt.subplot(514, sharex=ax1)
-    ax5 = plt.subplot(515, sharex=ax1)
+    ax1 = plt.subplot(911)
+    ax2 = plt.subplot(912, sharex=ax1)
+    ax3 = plt.subplot(913, sharex=ax1)
+    ax4 = plt.subplot(914, sharex=ax1)
+    ax5 = plt.subplot(915, sharex=ax1)
+    ax6 = plt.subplot(916, sharex=ax1)
+    ax7 = plt.subplot(917, sharex=ax1)
+    ax8 = plt.subplot(918, sharex=ax1)
+    ax9 = plt.subplot(919, sharex=ax1)
+    #ax10 = plt.subplot(9110, sharex=ax1)
+    #ax11 = plt.subplot(9111, sharex=ax1)
+    #ax12 = plt.subplot(9112, sharex=ax1)
+    #ax13 = plt.subplot(9113, sharex=ax1)
+    #ax14 = plt.subplot(9114, sharex=ax1)
+    #ax15 = plt.subplot(9115, sharex=ax1)
 
     ax1.plot(t,sig)
-    #ax1.plot(t,buf_gen0)
-    #ax1.plot(t,buf_gen90)
     ax1.grid(True)
-
-    ax2.plot(t,buf_lpf1_90)
-    #ax2.plot(t,buf_mux1_90)
+    ax2.plot(t,buf_gen0)
     ax2.grid(True)
-
-    ax2.plot(t,buf_lpf1_0)
-    #ax2.plot(t,buf_mux1_0)
-    ax2.grid(True)
-
-    ax3.plot(td,pll_buf0)
-    ax3.plot(td,buf_y9)
+    ax3.plot(t,buf_gen90)
     ax3.grid(True)
-
-    ax4.plot(td,pll_buf90)
-    ax4.plot(td,buf_y10)
+    ax4.plot(t,buf_mux1_0)
     ax4.grid(True)
+    ax5.plot(t,buf_mux1_90)
+    ax5.grid(True)
+    ax6.plot(t,buf_lpf1_0)
+    ax6.grid(True)
+    ax7.plot(t,buf_lpf1_90)
+    ax7.grid(True)
+    ax8.plot(td,buf_y7)
+    ax8.grid(True)
+    ax9.plot(td,buf_y8)
+    ax9.grid(True)
+    #ax10.plot(t,buf_y9
+    #ax11.plot(t,buf_y10
+
+    #ax2.plot(t,buf_lpf1_90)
+    #ax2.plot(t,buf_mux1_90)
+    #ax2.grid(True)
+
+    #ax2.plot(t,buf_lpf1_0)
+    #ax2.plot(t,buf_mux1_0)
+    #ax2.grid(True)
+
+    #ax3.plot(td,pll_buf0)
+    #ax3.plot(td,buf_y9)
+    #ax3.grid(True)
+
+    #ax4.plot(td,pll_buf90)
+    #ax4.plot(td,buf_y10)
+    #ax4.grid(True)
 
     plt.show()
 # *--------------------------------------------------------------------------
