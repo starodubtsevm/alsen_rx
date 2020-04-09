@@ -69,20 +69,15 @@ class alsen_rx(object):
       self._data0.pop()
       y0 = self._data0[self._buff_size-1]
       return y0
-      
+
    def delay90(self,x90):
       '''Задержка сигнала на длительность посылки канала 90'''
       self._data90.insert(0,x90)
       self._data90.pop()
       y90 = self._data90[self._buff_size-1]
       return y90
-      
+
    def sgn(self, sample):
       """Функция sgn"""
-      if sample > 0:
-          return 0
-      if sample == 0:
-          return 0
-      if sample < 0:
-          return 1
+      return 0 if( sample > 0 or sample == 0) else 1
 

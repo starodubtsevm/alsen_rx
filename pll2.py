@@ -39,14 +39,14 @@ class pll2(object):
             if (abs(self.phErr) >= LEN_OF_BIT * 3 / 200):
                 if(abs(self.phErr) >= LEN_OF_BIT * 3 / 50):
                     if(self.receiveFlag == 1):
-                        if(self.phErr < 0): 
+                        if(self.phErr < 0):
                             self.syncCount = LEN_OF_BIT + self.__corr
                         else:
                             self.syncCount = LEN_OF_BIT - self.__corr
                     else:
                         self.syncCount = LEN_OF_BIT-5-self.phErr*1/8
-                else: 
-                    if (self.phErr < 0): 
+                else:
+                    if (self.phErr < 0):
                         self.syncCount = LEN_OF_BIT +2
                     else:
                         self.syncCount = LEN_OF_BIT-2

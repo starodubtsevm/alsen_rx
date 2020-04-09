@@ -18,7 +18,6 @@ counter_suc = 0
 first_suc_byte_flag = 0
 t_reaction = 0
 # *--буферы для построения графиков---------------------------------------------
-sig = []
 buf_gen0 = []
 buf_gen90 = []
 buf_mux1_0 = []
@@ -58,9 +57,7 @@ noise_rms = rms(noise)
 # *--------------------------------------------------------------------------
 
 # сложение входного сигнала и шума
-for i in range(len(t)):
-    sig.append(signal[i])# + noise[i])
-
+sig = [signal[i] + noise[i] for i in range(len(t))]
 # *--------------------------------------------------------------------------
 
 # вычисление соотношения сигнал\шум
@@ -111,7 +108,7 @@ decoder90 = decode()
 # *--------------------------------------------------------------------------
 # конец инициализации узлов приемника
 
-to_plot = False
+to_plot = True
 
 start_time2 = time.process_time()
 
@@ -125,6 +122,9 @@ for i in range(len(t)):  # главный цикл приемника
 # *--------------------------------------------------------------------------
 
 # входные перемножители
+    #buf_mux1_0 [t] = rx.mux1(gen0, sig[i])
+    #buf_mux1_90.[t] = rx.mux1(gen90, sig[i])
+
     y0_aftermux1 = rx.mux1(gen0, sig[i])
     y90_aftermux1 = rx.mux1(gen90, sig[i])
     buf_mux1_0.append(y0_aftermux1)
@@ -230,18 +230,8 @@ elif len(print_buff90)>len(print_buff0):
     lenght = len(print_buff0)
 elif len(print_buff90)<len(print_buff0):
     lenght = len(print_buff90)
-else:
-    pass
 
-    pass
-
-#for i in range(0,lenght,3):
-#    print('{}c. кан0:{}{}{}c. кан90: {}{}\n'.format(print_buff0[i],str(print_buff0[i+1]), str(print_buff0[i+2]),print_buff90[i],str(print_buff90[i+1]), str(print_buff90[i+2])))
-#    print ("~" * 86)
-#print ("\n")
-#print ("*----------------------------------------------------------------*")
-
-print ("\nна ветке develop")
+print ("\nна ветке mas")
 print ("*----------------------------------------------------------------*")
 print ("Частота сэмплирования на входе " + "\x1b[32m"+\
                               str(fs) +"\x1b[0m" +" Hz")
@@ -263,7 +253,7 @@ print ("Верно принятых бит " + "\x1b[32m"+\
 print ("*----------------------------------------------------------------*")
 
 print ("Задержка приема первого байта " + "\x1b[32m"+\
-                               str(t_reaction) +"\x1b[0m" + " сек.")
+  str('{:.2f}'.format(t_reaction)) +"\x1b[0m" + " сек.  канал 0")
 print ("*----------------------------------------------------------------*")
 
 print ("Амплитуда сигнала " + "\x1b[32m"+\
@@ -285,23 +275,24 @@ if to_plot is True:
     ax1.plot(t,sig)
     #ax1.plot(t,buf_gen0)
     #ax1.plot(t,buf_gen90)
-    ax1.grid(True)
+    #ax1.grid(True)
 
     ax2.plot(t,buf_lpf1_90)
-    #ax2.plot(t,buf_mux1_90)
-    ax2.grid(True)
+    #ax1.plot(t,buf_mux1_90)
+    ax1.grid(True)
 
     ax2.plot(t,buf_lpf1_0)
     #ax2.plot(t,buf_mux1_0)
     ax2.grid(True)
 
+
     ax3.plot(td,pll_buf0)
     ax3.plot(td,buf_y9)
-    ax3.grid(True)
+    #ax3.grid(True)
 
     ax4.plot(td,pll_buf90)
     ax4.plot(td,buf_y10)
-    ax4.grid(True)
+    #ax4.grid(True)
 
     plt.show()
 # *--------------------------------------------------------------------------
