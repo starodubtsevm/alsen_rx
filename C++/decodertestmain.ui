@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DecoderTestMain</class>
+ <widget class="QMainWindow" name="DecoderTestMain">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>DecoderTestMain</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="1" column="0" colspan="3">
+     <widget class="QTextEdit" name="teLog"/>
+    </item>
+    <item row="2" column="0">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>665</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="2" column="2">
+     <widget class="QPushButton" name="pbLogClear">
+      <property name="text">
+       <string>Очистить лог</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0" colspan="3">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QPushButton" name="pbStart">
+        <property name="text">
+         <string>Запустить</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Длительность</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="spbDuration">
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="value">
+         <number>3</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Code1</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="cmbCode1">
+        <item>
+         <property name="text">
+          <string>0x01</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0x1F</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0x2C</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0x32</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0x4A</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0x54</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0x67</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0x79</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0x86</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0x98</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0xAB</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0xB5</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0xCD</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0xD3</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0xE0</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0xFE</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Code2</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="cmbCode2">
+        <item>
+         <property name="text">
+          <string>0x01</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0x1F</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0x2C</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0x32</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0x4A</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0x54</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0x67</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0x79</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0x86</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0x98</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0xAB</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0xB5</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0xCD</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0xD3</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0xE0</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0xFE</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="spbSections">
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="value">
+         <number>5</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
