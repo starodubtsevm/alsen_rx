@@ -11,5 +11,7 @@ fmod            = 12.89                      # скорость передачи
 LEN_OF_BIT      = int(Fs/fmod)               # длительность бита (для ФАПЧ)
 A_input         = 10000                      # амплиитуда входного сигнала (uint16)
 A_input_noise   = 1000                      # амплиитуда белого шума (uint16)
+Code_alsen1     = 0x32
+Code_alsen2     = 0x2C
 
 
