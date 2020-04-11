@@ -2,10 +2,10 @@ QT       += core gui testlib multimedia xml charts
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 DEPENDPATH  += $$PWD
-INCLUDEPATH += $$PWD $$PWD/include $$PWD/ui
+INCLUDEPATH += $$PWD #$$PWD/include $$PWD/ui
 
-MOC_DIR     += $$PWD/tmp
-OBJECTS_DIR += $$PWD/tmp
+MOC_DIR     += tmp
+OBJECTS_DIR += tmp
 #UI_DIR      += $$PWD/ui
 
 CONFIG += c++11
@@ -23,7 +23,7 @@ QMAKE_CXXFLAGS += -Wno-class-memaccess
 QMAKE_CXXFLAGS += -Wno-deprecated-copy
 
 include(signalview.pri);
-include(logger.pri);
+#include(logger.pri);
 include(alsencomponents.pri);
 include(digitalfilters.pri);
 
@@ -32,7 +32,7 @@ SOURCES += \
     decodertestmain.cpp
 
 HEADERS += \
-    decodertestmain.h \
+    decodertestmain.h
 
 FORMS += \
     decodertestmain.ui

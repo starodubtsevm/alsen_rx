@@ -7,7 +7,7 @@
 #include "digitalfilter.h"
 #include <vector>
 
-#include "alsen_sig_const.h"
+//#include "alsen_sig_const.h"
 
 #include <QTime>
 

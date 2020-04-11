@@ -4,7 +4,7 @@
 #include "alsensignaldecoder.h"
 #include "alsenconst.h"
 
-#include "ALSENReceiver.h"
+//#include "ALSENReceiver.h"
 
 ALSENSignalIODevice::ALSENSignalIODevice(IDigitalFilter &AViewFilter,
                                          IDigitalFilter &AWorkFilter,
