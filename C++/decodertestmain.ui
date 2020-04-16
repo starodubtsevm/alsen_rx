@@ -73,6 +73,9 @@
       </item>
       <item>
        <widget class="QComboBox" name="cmbCode1">
+        <property name="currentIndex">
+         <number>2</number>
+        </property>
         <item>
          <property name="text">
           <string>0x01</string>
@@ -164,6 +167,9 @@
       </item>
       <item>
        <widget class="QComboBox" name="cmbCode2">
+        <property name="currentIndex">
+         <number>3</number>
+        </property>
         <item>
          <property name="text">
           <string>0x01</string>

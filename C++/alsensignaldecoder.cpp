@@ -104,7 +104,7 @@ void ALSENSignalDecoder::operator()(const double ASample)
         {
             if(decoder0->proc(bit0))
             {
-                std::cout << "(" << FSampleCounter << ")" << "Decode byte 0: " << decoder0->toString() << " <-- " << std::hex << static_cast<int>(decoder0->Code())<< std::dec << std::endl;
+                //TODO std::cout << "(" << FSampleCounter << ")" << "Decode byte 0: " << decoder0->toString() << " <-- " << std::hex << static_cast<int>(decoder0->Code())<< std::dec << std::endl;
                 emit onCodeDetect0(decoder0->Code(),
                                    decoder0->BaseCode());
             }
@@ -124,7 +124,7 @@ void ALSENSignalDecoder::operator()(const double ASample)
         {
             if(decoder90->proc(bit90))
             {
-                std::cout << "(" << FSampleCounter << ")" << "Decode byte 90: " << decoder90->toString() << " <-- " << std::hex << static_cast<int>(decoder90->Code())<< std::dec << std::endl;
+                //TODO std::cout << "(" << FSampleCounter << ")" << "Decode byte 90: " << decoder90->toString() << " <-- " << std::hex << static_cast<int>(decoder90->Code())<< std::dec << std::endl;
                 emit onCodeDetect90(decoder90->Code(),
                                     decoder90->BaseCode());
             }

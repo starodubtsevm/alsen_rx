@@ -10,15 +10,15 @@ alsen_rx::alsen_rx(const uint   ADeskrFreq,
       bit_rate(ABitRate),   // скорость передачи Гц (Bod)
       fs(ADeskrFreq),       // частота дискретизации
       Ampl(1),//AAmplitude),
-      k(2 * cosf64(2 * M_PI * Fcar / fs)),
+      k(2 * cos(2 * M_PI * Fcar / fs)),
 
       X0_0(0.0),
       X1_0(0.0),
-      X2_0(Ampl * sinf64(2 * M_PI * Fcar / fs)),
+      X2_0(Ampl * sin(2 * M_PI * Fcar / fs)),
 
       X0_90(0.0),
       X1_90(0.0),
-      X2_90(Ampl * sinf64(2 * M_PI * Fcar / fs)),
+      X2_90(Ampl * sin(2 * M_PI * Fcar / fs)),
       cycle_count(0),
 
       DecimFactor(ADecimFactor), // фактор децимации

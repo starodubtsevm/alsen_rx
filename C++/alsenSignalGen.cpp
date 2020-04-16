@@ -1,7 +1,7 @@
 #include "alsenSignalGen.h"
 #include <cmath>
 #include <chrono>
-//#include <iostream>
+#include <iostream>
 
 alsenSignalGen::alsenSignalGen(const int    AAmplitude,
                                const uint   ASamplRate,
@@ -64,15 +64,15 @@ void alsenSignalGen::genSignal(alsenSignalGen::Samples & ADestSamples,
 
             if(diBit == 0) d_phase = 0; // 0
             else
-                if (diBit == 1) d_phase = M_PI/2; // 90
+                if (diBit == 1) d_phase = 1; // 90
                 else
-                    if (diBit == 2) d_phase = 3/2 * M_PI; // 280
+                    if (diBit == 2) d_phase = 3; // 270
                     else
-                        if (diBit == 3) d_phase = M_PI; // 180
+                        if (diBit == 3) d_phase = 2; // 180
 
             phase = phase + d_phase;
 
-            if (phase > 2 * M_PI) phase -= 2 * M_PI;
+            if( phase > 4 ) phase -= 4;
 
             Byte1 <<= 1;
             Byte2 <<= 1;
@@ -80,11 +80,12 @@ void alsenSignalGen::genSignal(alsenSignalGen::Samples & ADestSamples,
             count_bit--;
         }
 
-       double sample = FAmplitude * sinf64(i * 2 * M_PI * Fcar/FSamplRate + phase);
+        double v = i * 2 * M_PI * Fcar/FSamplRate + (phase*M_PI)/2;
+        double sample = FAmplitude * sin(v);
 
-       if(isAddNoise) sample += normal_distribution_noise();
+        if(isAddNoise) sample += normal_distribution_noise();
 
-       ADestSamples.push_back(sample);
+        ADestSamples.push_back(sample);
     }
 }
 
@@ -107,15 +108,15 @@ double alsenSignalGen::genSample()
 
         if(diBit == 0) d_phase = 0; // 0
         else
-            if (diBit == 1) d_phase = M_PI/2; // 90
+            if (diBit == 1) d_phase = 1; // 90
             else
-                if (diBit == 2) d_phase = 3/2 * M_PI; // 280
+                if (diBit == 2) d_phase = 3; // 270
                 else
-                    if (diBit == 3) d_phase = M_PI; // 180
+                    if (diBit == 3) d_phase = 2; // 180
 
         phase = phase + d_phase;
 
-        if (phase > 2 * M_PI) phase -= 2 * M_PI;
+        if( phase > 4 ) phase -= 4;
 
         Byte1 <<= 1;
         Byte2 <<= 1;
@@ -123,9 +124,13 @@ double alsenSignalGen::genSample()
         count_bit--;
     }
 
-   double sample = FAmplitude * sinf64(Iterator * 2 * M_PI * Fcar/FSamplRate + phase);
-
-   if(FIsAddNoise) sample += normal_distribution_noise();
+    double v = Iterator * 2 * M_PI * Fcar/FSamplRate + (phase*M_PI)/2;
+    //printf( "%d,%d\n", imp_duty_count, count_bit );
+    //printf( "%.10f\n", phase );
+    //printf( "%.4f\n", v );
+    double sample = FAmplitude * sin(v);
+    printf( "%.4f\n", sample );
+   //TODO if(FIsAddNoise) sample += normal_distribution_noise();
 
    Iterator++;
 
@@ -177,7 +182,6 @@ double alsenSignalGen::normal_distribution_noise()
 
 void alsenSignalGen::initData()
 {
-    imp_duty_count = 0;
     count_bit = 8;
     Byte1 = FCode1;
     Byte2 = FCode2;

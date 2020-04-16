@@ -41,9 +41,14 @@ print_buff90 = []
 # генерация тестового сигнала АЛС-ЕН (в буфер)
 Code_alsen1 = 0x2C
 Code_alsen2 = 0x32
-print('Code_alsen1 = {}; Code_alsen2 = {}'.format(hex(Code_alsen1).upper(),hex(Code_alsen2).upper()))
+#TODO print('Code_alsen1 = {}; Code_alsen2 = {}'.format(hex(Code_alsen1).upper(),hex(Code_alsen2).upper()))
 # signal = []
 signal = proc_alsen(fs, len(t), Code_alsen1, Code_alsen2)
+
+#for i in range(len(t)):
+#    print(int(round(signal[i])))
+    #print(round(signal[i],2))
+exit(0)
 sig_rms = rms(signal)
 
 # *--------------------------------------------------------------------------

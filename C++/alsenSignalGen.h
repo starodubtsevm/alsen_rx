@@ -14,7 +14,7 @@ public:
     alsenSignalGen(const int    AAmplitude = 10000,
                    const uint   ASamplRate = 8000,
                    const double ACarrierFrequency = 174.89,
-                   const double ABitRate = 13.89);
+                   const double ABitRate = 12.89);
     virtual ~alsenSignalGen();
 
     void genSignal(Samples & ADestSamples,
@@ -53,8 +53,8 @@ private:
     uint   imp_duty_count;
     uint   count_bit;
     uint8  diBit;
-    double phase;
-    double d_phase;
+    uint8 phase;
+    uint8 d_phase;
     uint   ConstDutyCount;
     uint8  FCode1;
     uint8  FCode2;

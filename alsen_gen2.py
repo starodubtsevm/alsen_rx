@@ -34,14 +34,19 @@ def proc_alsen(Fs, N, Code_alsen1, Code_alsen2):
             elif diBit == 2:
                 d_phase = 3/2*np.pi
             phase = phase + d_phase
-            if phase > 2*np.pi:
-                phase -= 2*np.pi
+            if phase > (2*np.pi):
+                phase -= (2*np.pi)
             #print (diBit,Byte1,Byte2,phase)
             Byte1=Byte1<<1
             Byte2=Byte2<<1
             count_bit=count_bit-1
          
-        f = A*np.sin(2*np.pi*Fcar*1/fs*i+phase)
+        v = 2*np.pi*Fcar*1/fs*i+phase
+        #print(imp_duty_count, count_bit)
+        #print(round(phase,10))
+        #print(round(v,4))
+        f = A*np.sin(v)
+        print(round(f,4))
         y_res.append(f)
     return y_res
 

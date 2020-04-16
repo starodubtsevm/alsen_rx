@@ -90,11 +90,11 @@ double DigitalFilterIIR2::filter(const double ASample)
         input = ASample;
         output = 0.0;
 
-        size_t i = 0;
+        decltype(COEFFS)::size_type i = 0;
         for(; i < COEFFS.size(); ++i)
         {
-            for(size_t ii = 0; ii < 3; ++ii) FIRCOEFFS.push_back(COEFFS[i][ii]);
-            for(size_t ii = 3; ii < 6; ++ii) IIRCOEFFS.push_back(COEFFS[i][ii]);
+            for(auto ii = 0; ii < 3; ++ii) FIRCOEFFS.push_back(COEFFS[i][ii]);
+            for(auto ii = 3; ii < 6; ++ii) IIRCOEFFS.push_back(COEFFS[i][ii]);
 
             acc_input[i] = (input + buffer1[i] * (-IIRCOEFFS[1]) + buffer2[i] * (-IIRCOEFFS[2]));
             acc_output[i] = (acc_input[i] * FIRCOEFFS[0] + buffer1[i] * FIRCOEFFS[1] + buffer2[i] * FIRCOEFFS[2]);

@@ -6,6 +6,8 @@
 #include "alsensignaliodevice.h"
 #include "digitalfilter.h"
 #include <vector>
+#include <iostream>
+#include <iomanip>
 
 //#include "alsen_sig_const.h"
 
@@ -82,6 +84,8 @@ void DecoderTestMain::on_pbStart_clicked()
     for(size_t i = 0; i < CountDuration; ++i)
     {
         double Sample = sigGen.genSample();
+        //std::cout << round(Sample) << std::endl;
+        //std::cout << std::setprecision(13) << Sample << std::endl;
         FSamplesVec.push_back(Sample);
         device.writeRAWData(Sample);
     }
