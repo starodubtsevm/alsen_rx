@@ -45,9 +45,8 @@ Code_alsen2 = 0x32
 # signal = []
 signal = proc_alsen(fs, len(t), Code_alsen1, Code_alsen2)
 
-#for i in range(len(t)):
-#    print(int(round(signal[i])))
-    #print(round(signal[i],2))
+for i in range(len(t)):
+    print(round(signal[i],4))
 exit(0)
 sig_rms = rms(signal)
 

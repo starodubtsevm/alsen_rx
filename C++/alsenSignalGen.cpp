@@ -129,12 +129,12 @@ double alsenSignalGen::genSample()
     //printf( "%.10f\n", phase );
     //printf( "%.4f\n", v );
     double sample = FAmplitude * sin(v);
-    printf( "%.4f\n", sample );
-   //TODO if(FIsAddNoise) sample += normal_distribution_noise();
+    //printf( "%.4f\n", sample );
+    //TODO if(FIsAddNoise) sample += normal_distribution_noise();
 
-   Iterator++;
+    Iterator++;
 
-   return sample;
+    return sample;
 }
 
 void alsenSignalGen::Amplitude(const alsenSignalGen::uint AAmplitude)

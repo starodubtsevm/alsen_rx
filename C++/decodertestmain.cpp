@@ -86,6 +86,7 @@ void DecoderTestMain::on_pbStart_clicked()
         double Sample = sigGen.genSample();
         //std::cout << round(Sample) << std::endl;
         //std::cout << std::setprecision(13) << Sample << std::endl;
+        printf( "%.4f\n", Sample );
         FSamplesVec.push_back(Sample);
         device.writeRAWData(Sample);
     }

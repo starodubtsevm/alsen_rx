@@ -46,7 +46,7 @@ def proc_alsen(Fs, N, Code_alsen1, Code_alsen2):
         #print(round(phase,10))
         #print(round(v,4))
         f = A*np.sin(v)
-        print(round(f,4))
+        #print(round(f,4))
         y_res.append(f)
     return y_res
 
