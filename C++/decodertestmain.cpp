@@ -47,7 +47,7 @@ void DecoderTestMain::on_pbStart_clicked()
                     .arg(ui->spbDuration->value())
                     .arg(CountDuration)
                     .arg(QString::number(bauerCode[ui->cmbCode1->currentIndex()],16))
-                    .arg(QString::number(bauerCode[ui->cmbCode2->currentIndex()],16)));
+            .arg(QString::number(bauerCode[ui->cmbCode2->currentIndex()],16)));
 
     DigitalFilterNoFilter ViewFilter;
     DigitalFilterNoFilter WorkFilter;
