@@ -11,25 +11,40 @@ class decode(object):
         self.res = 0
         self.base = 0
 
+    def toString(self):
+
+        s = "";
+        for c in self.string:
+            s = s + str(c) + ". "
+        s = "["+s[:-2]+"]";
+        return s
+
+
     def procNew(self,bit,ABase):
         '''Сравнение битовой последовательности '''
         self.string.insert(8, bit)
         self.string.pop(0)
-        s = self.string
+        s = self.toString()#self.string
 
         self.byte = self.byte << 1
 
         if bit == 1:
             self.byte = self.byte | 0x01
 
+        #print( "byte: %d" % (self.byte % 256) )
+
         if (self.byte % 256) in bauerCodeFullArray:
             self.res = 1
+            #print( "self.res: 1" )
         else:
             self.res = 0
+            #print( "self.res: 0" )
 
         try:
             index = int(bauerCodeFullArray.index(self.byte % 256) / 8)
+            #print( "index: %d" % index )
             self.base = bauerCode[index]
+            #print( "self.base: %d" % self.base )
         except Exception:
             self.res = 0
             self.base = 0xff
@@ -37,6 +52,11 @@ class decode(object):
         if self.base != ABase:
             self.res = 0
 
+#        print( "CodeAlsen: %d" % ABase )
+#        print( "self.res: %d" % self.res )
+#        print( "byte: %d" % (self.byte % 256) )
+#        print( "self.base: %d" % self.base )
+#        print( "" );
         return self.res, s, hex(self.byte % 256), hex(self.base)
 
     def proc(self,bit,ABase):

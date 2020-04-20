@@ -4,10 +4,19 @@
 
 #include <iostream>
 
-ALSENSignalDecoder::ALSENSignalDecoder(const quint32 ADescrFreq,
-                                       const uint ADecimFactor,
-                                       QObject *parent) :
+ALSENSignalDecoder::ALSENSignalDecoder
+(
+        const uint8_t ABaseCode0,
+        const uint8_t ABaseCode90,
+        const quint32 ADescrFreq,
+        const uint   ADecimFactor,
+        QObject *parent
+)
+:
     QObject(parent),
+    FBaseCode0(ABaseCode0),
+    FBaseCode90(ABaseCode90),
+    FDescrFreq(ADescrFreq),
     FDecimFactor(ADecimFactor),
     FSampleCounter(0),
     FAlsenRX(new alsen_rx(ADescrFreq)),
@@ -28,7 +37,29 @@ ALSENSignalDecoder::ALSENSignalDecoder(const quint32 ADescrFreq,
 //    }
 }
 
-void ALSENSignalDecoder::operator()(const double ASample)
+static void print_res
+(
+        const double time,
+        const uint8_t chan,
+        const decode* decoder,
+        const uint8_t FBaseCode,
+        const char* result
+)
+{
+    printf
+    (
+        "%.2fc. кан%-2d:%s Code: 0x%x Byte: 0x%x; Base: 0x%x %s\n",
+        time,
+        chan,
+        decoder->toString().c_str(),
+        FBaseCode,
+        decoder->Code(),
+        decoder->BaseCode(),
+        result
+    );
+}
+
+void ALSENSignalDecoder::operator()(const double ASample )
 {
 /*
 # локальный генератор sin и cos
@@ -119,13 +150,21 @@ void ALSENSignalDecoder::operator()(const double ASample)
             # else:
                 # print_buff0.append("\x1b[31m not ok \x1b[0m")
 */
+
+        double time = FSampleCounter / double(FDescrFreq);
+
         if(sync0 == 1)
         {
-            if(decoder0->proc(bit0))
+            if(decoder0->proc(bit0,FBaseCode0))
             {
                 //TODO std::cout << "(" << FSampleCounter << ")" << "Decode byte 0: " << decoder0->toString() << " <-- " << std::hex << static_cast<int>(decoder0->Code())<< std::dec << std::endl;
                 emit onCodeDetect0(decoder0->Code(),
                                    decoder0->BaseCode());
+                print_res(time,0,decoder0,FBaseCode0,"ok!");
+            }
+            else
+            {
+                print_res(time,0,decoder0,FBaseCode0,"not ok");
             }
         }
 /*
@@ -141,11 +180,16 @@ void ALSENSignalDecoder::operator()(const double ASample)
 */
         if(sync90 == 1)
         {
-            if(decoder90->proc(bit90))
+            if(decoder90->proc(bit90,FBaseCode90))
             {
                 //TODO std::cout << "(" << FSampleCounter << ")" << "Decode byte 90: " << decoder90->toString() << " <-- " << std::hex << static_cast<int>(decoder90->Code())<< std::dec << std::endl;
                 emit onCodeDetect90(decoder90->Code(),
                                     decoder90->BaseCode());
+                print_res(time,90,decoder90,FBaseCode90,"ok!");
+            }
+            else
+            {
+                print_res(time,90,decoder90,FBaseCode90,"not ok");
             }
         }
 /*

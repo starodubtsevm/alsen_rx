@@ -55,7 +55,8 @@ void DecoderTestMain::on_pbStart_clicked()
     DigitalFilterNoFilter ViewFilter;
     DigitalFilterNoFilter WorkFilter;
 
-    ALSENSignalDecoder    decoder;
+    ALSENSignalDecoder decoder(sigGen.Code2(),sigGen.Code1());
+
     connect(&decoder,&ALSENSignalDecoder::onCodeDetect0,
             this, &DecoderTestMain::onCodeDetect0proc);
     connect(&decoder,&ALSENSignalDecoder::onCodeDetect90,
@@ -98,9 +99,10 @@ void DecoderTestMain::on_pbStart_clicked()
 
     ui->pbStart->setEnabled(true);
 
-    //makeAndShowCharts();
+    makeAndShowCharts(); // закомментить при выводе в консоль
 
-    QTimer::singleShot(200, this, &DecoderTestMain::close);
+    //TODO для вывода в консоль быстрого
+    //QTimer::singleShot(200, this, &DecoderTestMain::close);
 }
 
 void DecoderTestMain::addMessageToLog(const QString AMessage)

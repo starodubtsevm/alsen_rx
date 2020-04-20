@@ -14,7 +14,7 @@ public:
     uint8 BaseCode() const { return FBaseCode; }
     std::string toString() const;
 
-    bool proc(uint8 ABit);
+    bool proc(uint8 ABit, const uint8_t CodeAlsen);
 private:
     const uint8 bauerCode[16] = { 0x01, 0x1F, 0x2C, 0x32, 0x4A, 0x54, 0x67, 0x79, 0x86, 0x98, 0xAB, 0xB5, 0xCD, 0xD3, 0xE0, 0xFE };
     // полная таблица кодов бауэра - 128 значений
@@ -41,7 +41,7 @@ private:
 
     uint8 FCode;
     uint8 FBaseCode;
-    bool IsValid();
+    bool IsValid(const uint8_t CodeAlsen);
 };
 
 #endif // DECODE_H

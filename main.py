@@ -225,7 +225,7 @@ for i in range(len(t)):  # главный цикл приемника
                                                                    str(hex(Code_alsen2)),
                                                                    str(byte),
                                                                    str(base),
-                                                                   "\x1b[32m  ok!  \x1b[0m"))
+                                                                   "ok!"))
                 #print_buff0.append("\x1b[32m  ok!  \x1b[0m")
             else:
                 print('{}c. кан0 :{} Code: {} Byte: {}; Base: {} {}'.format(str('{:.2f}'.format(1.0 / fs * i)),
@@ -233,7 +233,7 @@ for i in range(len(t)):  # главный цикл приемника
                                                                 str(hex(Code_alsen2)),
                                                                 str(byte),
                                                                 str(base),
-                                                                "\x1b[31m not ok \x1b[0m"))
+                                                                "not ok"))
                 #print_buff0.append("\x1b[31m not ok \x1b[0m")
 
         if sync90 == 1:
@@ -247,7 +247,7 @@ for i in range(len(t)):  # главный цикл приемника
                                                                    str(hex(Code_alsen1)),
                                                                    str(byte),
                                                                    str(base),
-                                                                   "\x1b[32m  ok!  \x1b[0m"))
+                                                                   "ok!"))
                 #print_buff90.append("\x1b[32m  ok!  \x1b[0m")
             else:
                 print('{}c. кан90:{} Code: {} Byte: {}; Base: {} {}'.format(str('{:.2f}'.format(1.0 / fs * i)),
@@ -255,11 +255,11 @@ for i in range(len(t)):  # главный цикл приемника
                                                                    str(hex(Code_alsen1)),
                                                                    str(byte),
                                                                    str(base),
-                                                                   "\x1b[31m not ok \x1b[0m"))
+                                                                   "not ok"))
                 #print_buff90.append("\x1b[31m not ok \x1b[0m")
 
 # *--------------------------------------------------------------------------
-exit(0)
+#exit(0) # раскомментить при выводе в консоль
 time1 = (time.process_time() - start_time1)
 time2 = (time.process_time() - start_time2)
 

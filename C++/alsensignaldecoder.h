@@ -11,9 +11,14 @@ class ALSENSignalDecoder : public QObject
 {
     Q_OBJECT
 public:
-    explicit ALSENSignalDecoder(const quint32 ADescrFreq = 8000,
-                                const uint   ADecimFactor = 10,
-                                QObject *parent = nullptr);
+    explicit ALSENSignalDecoder
+    (
+            const uint8_t ABaseCode0,
+            const uint8_t ABaseCode90,
+            const quint32 ADescrFreq = 8000,
+            const uint   ADecimFactor = 10,
+            QObject *parent = nullptr
+    );
 
     quint8 Code0() const  { return decoder0->Code(); }
     quint8 Group0() const { return decoder0->BaseCode(); }
@@ -21,7 +26,7 @@ public:
     quint8 Code90() const  { return decoder90->Code(); }
     quint8 Group90() const { return decoder90->BaseCode(); }
 
-    void operator()(const double ASample);
+    void operator()(const double ASample );
 
 signals:
     void onCodeDetect0(const quint8 ACode0,
@@ -52,8 +57,13 @@ signals:
                  const uint ABit);
 
 private:
+    uint8_t FBaseCode0;
+    uint8_t FBaseCode90;
+    uint32_t            FDescrFreq;
+
     uint                FDecimFactor;
     uint64_t            FSampleCounter;
+
 
     alsen_rx          * FAlsenRX;
     DigitalFilterIIR2 * flt_iir1;
