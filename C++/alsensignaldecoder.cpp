@@ -18,6 +18,14 @@ ALSENSignalDecoder::ALSENSignalDecoder(const quint32 ADescrFreq,
     decoder0(new decode),
     decoder90(new decode)
 {
+//    for( auto c : flt_iir1->COEFFS )
+//    {
+//        for( auto v : c )
+//        {
+//            //std::cout<<v<<std::endl;
+//            printf( "%f\n", v );
+//        }
+//    }
 }
 
 void ALSENSignalDecoder::operator()(const double ASample)
@@ -31,6 +39,8 @@ void ALSENSignalDecoder::operator()(const double ASample)
     double gen0 = FAlsenRX->Result().first;
     double gen90 = FAlsenRX->Result().second;
     emit onAfterGen(gen0,gen90);
+    //printf( "%.4f|%.4f\n", gen0, gen90 );
+
 /*
 # входные перемножители
     y0_aftermux1 = rx.mux1(gen0, sig[i])
@@ -40,6 +50,7 @@ void ALSENSignalDecoder::operator()(const double ASample)
     double y0_aftermux1 = FAlsenRX->mux1(gen0,ASample);
     double y90_aftermux1 = FAlsenRX->mux1(gen90,ASample);
     emit onAfterMux(y0_aftermux1,y90_aftermux1);
+    //printf( "%.4f|%.4f\n", y0_aftermux1, y90_aftermux1 );
 /*
 # фильтры - интеграторы
     y0_afterlpf1 = flt_iir1.filter(y0_aftermux1)
@@ -49,6 +60,7 @@ void ALSENSignalDecoder::operator()(const double ASample)
     double y0_afterlpf1 = flt_iir1->filter(y0_aftermux1);
     double y90_afterlpf1 = flt_iir2->filter(y90_aftermux1);
     emit onAfterIIR(y0_afterlpf1,y90_afterlpf1);
+    //printf( "%.1f|%.1f\n", y0_afterlpf1, y90_afterlpf1 );
 /*
 # дифференциальный декодер
     if i % D == 0:
@@ -61,6 +73,8 @@ void ALSENSignalDecoder::operator()(const double ASample)
         double y7 = FAlsenRX->Result().first;
         double y8 = FAlsenRX->Result().second;
         emit onY7_8(y7,y8);
+        //printf( "%.0f\n", y7 );
+        //printf( "%.0f\n", y8 );
 /*
 # функции sgn-(компараторы)
         y9 = rx.sgn(y7)
@@ -70,6 +84,8 @@ void ALSENSignalDecoder::operator()(const double ASample)
         uint y9 = FAlsenRX->sgn(y7);
         uint y10 = FAlsenRX->sgn(y8);
         emit onY9_10(y9,y10);
+//        printf( "%d\n", y9  );
+//        printf( "%d\n", y10 );
 /*
 # ФАПЧ
         sync0, err0, bit0 = pll0.proc(y9)  # выходной сигнал ФАПЧ канал 0
@@ -80,6 +96,9 @@ void ALSENSignalDecoder::operator()(const double ASample)
         uint sync0  = pll0->Result().Syncro;
         uint bit0   = pll0->Result().Sample;
         emit onPll0(sync0,bit0);
+        //printf( "%d\n", sync0 );
+        //printf( "%d\n", bit0 );
+
         pll90->proc(y10);
         uint sync90  = pll90->Result().Syncro;
         uint bit90   = pll90->Result().Sample;

@@ -9,6 +9,8 @@
 #include <iostream>
 #include <iomanip>
 
+#include <QTimer>
+
 //#include "alsen_sig_const.h"
 
 #include <QTime>
@@ -20,6 +22,7 @@ DecoderTestMain::DecoderTestMain(QWidget *parent)
     , ui(new Ui::DecoderTestMain)
 {
     ui->setupUi(this);
+    ui->pbStart->click();
 }
 
 DecoderTestMain::~DecoderTestMain()
@@ -86,7 +89,7 @@ void DecoderTestMain::on_pbStart_clicked()
         double Sample = sigGen.genSample();
         //std::cout << round(Sample) << std::endl;
         //std::cout << std::setprecision(13) << Sample << std::endl;
-        printf( "%.4f\n", Sample );
+        //printf( "%.4f\n", Sample );
         FSamplesVec.push_back(Sample);
         device.writeRAWData(Sample);
     }
@@ -95,7 +98,9 @@ void DecoderTestMain::on_pbStart_clicked()
 
     ui->pbStart->setEnabled(true);
 
-    makeAndShowCharts();
+    //makeAndShowCharts();
+
+    QTimer::singleShot(200, this, &DecoderTestMain::close);
 }
 
 void DecoderTestMain::addMessageToLog(const QString AMessage)

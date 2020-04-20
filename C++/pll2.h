@@ -1,6 +1,8 @@
 #ifndef PLL2_H
 #define PLL2_H
 
+#include <stdint.h>
+
 /*!
  * \brief Класс pll2 - ФАПЧ
  */
@@ -18,8 +20,8 @@ public:
     } FAPCHResult;
 
     pll2(const uint   ADeskrFreq,
-         const uint   AScaleFs = 70,
-         const double ASignMoment = 4.5,
+         const uint   AScaleFs = 80,
+         const double ASignMoment = 4.5, // из main.py вылазит
          const double ABitRate = 12.89,
          const uint   ADecimFactor = 10);
 
@@ -40,6 +42,7 @@ private:
     uint    scale_fs;
     int     corr;
     double  sign_moment;
+    uint32_t  proc_cnt = 0;
 
     FAPCHResult FResult;
 

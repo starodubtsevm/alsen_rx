@@ -110,8 +110,10 @@ public:
 
     virtual double filter(const double ASample);
 
-private:
+public:
     Coefficients COEFFS;
+private:
+
     std::vector<double> acc_input;
     std::vector<double> acc_output;
     std::vector<double> buffer1;

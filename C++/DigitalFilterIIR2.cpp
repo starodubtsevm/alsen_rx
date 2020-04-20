@@ -1,5 +1,7 @@
 #include "DigitalFilterIIRr2.h"
 
+#include <iostream>
+
 DigitalFilterIIR2::DigitalFilterIIR2(const uint  AFs,
                                      const uint8 AOrder,
                                      const Cutoff ACutoff,
@@ -96,8 +98,20 @@ double DigitalFilterIIR2::filter(const double ASample)
             for(auto ii = 0; ii < 3; ++ii) FIRCOEFFS.push_back(COEFFS[i][ii]);
             for(auto ii = 3; ii < 6; ++ii) IIRCOEFFS.push_back(COEFFS[i][ii]);
 
+//            for( auto v : FIRCOEFFS ) printf( "%f\n", v );
+//            for( auto v : IIRCOEFFS ) printf( "%f\n", v );
+
             acc_input[i] = (input + buffer1[i] * (-IIRCOEFFS[1]) + buffer2[i] * (-IIRCOEFFS[2]));
             acc_output[i] = (acc_input[i] * FIRCOEFFS[0] + buffer1[i] * FIRCOEFFS[1] + buffer2[i] * FIRCOEFFS[2]);
+
+            //printf( "acc_input : %f =  1 * %f + %f * -%f + %f * -%f\n", acc_input[i], input, buffer1[i], IIRCOEFFS[1], buffer2[i], IIRCOEFFS[2] );
+            //printf( "acc_output: %f = %f * %f + %f * %f + %f * %f\n", acc_output[i], acc_input[i], FIRCOEFFS[0], buffer1[i], FIRCOEFFS[1], buffer2[i], FIRCOEFFS[2] );
+
+//            printf( "%f\n", input );
+//            printf( "%f\n", acc_input[i] );
+//            printf( "%f\n", acc_output[i] );
+//            printf( "%f\n", buffer1[i] );
+//            printf( "%f\n", buffer2[i] );
 
             buffer2[i] = buffer1[i];
             buffer1[i] = acc_input[i];
@@ -109,5 +123,6 @@ double DigitalFilterIIR2::filter(const double ASample)
         output = acc_output[i-1];
     };
 
+    //printf( "%.0f\n", output );
     return output;
 }

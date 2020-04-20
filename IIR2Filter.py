@@ -128,6 +128,12 @@ class IIR2Filter(object):
                 self.FIRCOEFFS = self.COEFFS[i][0:3]
                 self.IIRCOEFFS = self.COEFFS[i][3:6]
 
+#                for j in range(len(self.FIRCOEFFS)):
+#                    print("%f" % self.FIRCOEFFS[j])
+
+#                for j in range(len(self.IIRCOEFFS)):
+#                    print("%f" % self.IIRCOEFFS[j])
+
                 #Calculating the accumulated input consisting of the input and 
                 #the values coming from the feedbaack loops (delay buffers 
                 #weighed by the IIR coefficients).
@@ -141,6 +147,15 @@ class IIR2Filter(object):
                 + self.buffer1[i] * self.FIRCOEFFS[1] + self.buffer2[i] 
                 * self.FIRCOEFFS[2])
 
+                #print( "acc_input : %f =  1 * %f + %f * -%f + %f * -%f" % (self.acc_input[i], self.input, self.buffer1[i], self.IIRCOEFFS[1], self.buffer2[i], self.IIRCOEFFS[2]) );
+                #print( "acc_output: %f = %f * %f + %f * %f + %f * %f" % (self.acc_output[i], self.acc_input[i], self.FIRCOEFFS[0], self.buffer1[i], self.FIRCOEFFS[1], self.buffer2[i], self.FIRCOEFFS[2]) );
+
+#                print("%f" % self.input)
+#                print("%f" % self.acc_input[i])
+#                print("%f" % self.acc_output[i])
+#                print("%f" % self.buffer1[i])
+#                print("%f" % self.buffer2[i])
+
                 #Shifting the values on the delay line: acc_input->buffer1->
                 #buffer2
                 self.buffer2[i] = self.buffer1[i]
@@ -150,5 +165,6 @@ class IIR2Filter(object):
 
             self.output = self.acc_output[i]
 
+        #print( "%.0f" % self.output );
         return self.output
 

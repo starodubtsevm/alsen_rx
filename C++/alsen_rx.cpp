@@ -37,10 +37,7 @@ alsen_rx::alsen_rx(const uint   ADeskrFreq,
 
 int alsen_rx::sgn(const double sample) const
 {
-    if (sample > 0) return 0;
-    if (sample == 0) return 0;
-    if (sample < 0)  return 1;
-    return -1;
+    return (sample < 0) ? 1 : 0;
 }
 
 void alsen_rx::local_gen()

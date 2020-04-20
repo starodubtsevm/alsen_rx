@@ -45,9 +45,9 @@ Code_alsen2 = 0x32
 # signal = []
 signal = proc_alsen(fs, len(t), Code_alsen1, Code_alsen2)
 
-for i in range(len(t)):
-    print(round(signal[i],4))
-exit(0)
+#for i in range(len(t)):
+#    print(round(signal[i],4))
+#exit(0)
 sig_rms = rms(signal)
 
 # *--------------------------------------------------------------------------
@@ -86,7 +86,10 @@ flt_iir1 = IIR2Filter.IIR2Filter(4, [13], 'low', design='cheby1', rs=1, fs=fs)
 #print("Коэффициенты flt_iir1")
 #print(flt_iir1.COEFFS)
 #print(len(flt_iir1.COEFFS))
-
+#for i in range(len(flt_iir1.COEFFS)):
+#    for j in range(len(flt_iir1.COEFFS[i])):
+#        print("%f" % flt_iir1.COEFFS[i][j])
+#exit(0)
 # фильтр-интегратор канала 90
 flt_iir2 = IIR2Filter.IIR2Filter(4, [13], 'low', design='cheby1', rs=1, fs=fs)
 # flt_fir2 = FIR2Filter(255, 1,15, fs=fs)
@@ -96,13 +99,13 @@ flt_iir2 = IIR2Filter.IIR2Filter(4, [13], 'low', design='cheby1', rs=1, fs=fs)
 
 # ФАПЧ канала 0
 pll0 = pll2()
-pll0.scale_fs = 70
+pll0.scale_fs = 70  # код безсоплзен, т.к. данный параметр используоется толкьо в init
 pll0.sign_moment = 4.5
 pll0.Fs = Fs
 
 # ФАПЧ канала 90
 pll90 = pll2()
-pll90.scale_fs = 70
+pll90.scale_fs = 70  # код безсоплзен, т.к. данный параметр используоется толкьо в init
 pll90.sign_moment = 4.5
 pll90.Fs = Fs
 
@@ -128,6 +131,8 @@ for i in range(len(t)):  # главный цикл приемника
     #    print("gen90 {}".format(gen90))
     buf_gen0.append(gen0)
     buf_gen90.append(gen90)
+    #print("%.4f|%.4f" % (gen0,gen90))
+    #print(round(gen0,4),"|",round(gen90,4))
 
 # *--------------------------------------------------------------------------
 
@@ -139,7 +144,7 @@ for i in range(len(t)):  # главный цикл приемника
     #    print("y90_aftermux1 {}".format(y90_aftermux1))
     buf_mux1_0.append(y0_aftermux1)
     buf_mux1_90.append(y90_aftermux1)
-
+    #print("%.4f|%.4f" % (y0_aftermux1,y90_aftermux1))
 # *--------------------------------------------------------------------------
 
 # фильтры - интеграторы
@@ -150,6 +155,7 @@ for i in range(len(t)):  # главный цикл приемника
     #    print("y90_afterlpf1 {}".format(y90_afterlpf1))
     buf_lpf1_0.append(y0_afterlpf1)
     buf_lpf1_90.append(y90_afterlpf1)
+    #print("%.1f|%.1f" % (y0_afterlpf1,y90_afterlpf1))
 
 # *--------------------------------------------------------------------------
 
@@ -161,6 +167,8 @@ for i in range(len(t)):  # главный цикл приемника
         #    print("y8 {}".format(y8))
         buf_y7.append(y7)
         buf_y8.append(y8)
+        #print("%.0f" % y7 )
+        #print("%.0f" % y8 )
 # *--------------------------------------------------------------------------
 
 # функции sgn-(компараторы)
@@ -171,11 +179,16 @@ for i in range(len(t)):  # главный цикл приемника
         #    print("y9 {}".format(y10))
         buf_y9.append(y9)   # выходной сигнал канала 0
         buf_y10.append(y10) # выходной сигнал канала 90
+        #print("%d" % y9  )
+        #print("%d" % y10 )
 
 # *--------------------------------------------------------------------------
 
 # ФАПЧ
+        #sync0,err0,bit0 = 0,0,0
         sync0,err0,bit0 = pll0.proc(y9) # выходной сигнал ФАПЧ канал 0
+        #print("%d" % sync0 )
+        #print("%d" % bit0 )
         #if i % 60==0:
         #    print("sync0 {}".format(sync0))
         #    print("bit0 {}".format(bit0))
@@ -183,6 +196,7 @@ for i in range(len(t)):  # главный цикл приемника
         pll_err_buf0.append(err0)
         #print (sync0,err0,bit0)
         
+        #sync90,err90,bit90 = 0,0,0
         sync90,err90,bit90 = pll90.proc(y10) # выходной сигнал ФАПЧ канал 90
         #if i % 60==0:
         #    print("sync90 {}".format(sync90))
@@ -245,7 +259,7 @@ for i in range(len(t)):  # главный цикл приемника
                 #print_buff90.append("\x1b[31m not ok \x1b[0m")
 
 # *--------------------------------------------------------------------------
-
+exit(0)
 time1 = (time.process_time() - start_time1)
 time2 = (time.process_time() - start_time2)
 
