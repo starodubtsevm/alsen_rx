@@ -1,0 +1,8 @@
+*.o
+*.moc
+moc_*.h
+*.cpp
+Makefile
+.qmake.stash
+nohup.out
+
