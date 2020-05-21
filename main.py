@@ -9,6 +9,7 @@ from const import*
 from rec_create import*
 from print_func import*
 from plot_func import*
+from read_from_file import*
 
 start_time1 = time.process_time() #старт таймера общего времени выполнения скрипта
 counter_total = 0
@@ -39,7 +40,9 @@ plot_en = True
 # *--------------------------------------------------------------------------
 # генерация тестового сигнала АЛС-ЕН (в буфер)
 
-signal = proc_alsen(fs, len(t), Code_alsen1, Code_alsen2)
+#signal = proc_alsen(fs, len(t), Code_alsen1, Code_alsen2)
+signal = read_from_file()
+#print (len(signal))
 sig_rms = rms(signal)
 
 # *--------------------------------------------------------------------------
@@ -185,7 +188,7 @@ to_print(fs,Fs,T,time2,time1,counter_total,counter_suc,t_reaction,A_input,s_n)
 
 # построение графиков
 if plot_en is True:
-    to_plot(sig, buf_lpf1_0, buf_lpf1_90, pll_buf0, buf_y9, pll_buf90, buf_y10)
+    to_plot(sig, buf_lpf1_0, buf_lpf1_90, pll_buf0, buf_y9, pll_buf90, buf_y10, pll_err_buf0)
 '''
 buf_gen0 = []
 buf_gen90 = []

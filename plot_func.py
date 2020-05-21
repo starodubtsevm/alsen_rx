@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from const import fs, Fs, D, t, A_input, td, T
 
-def to_plot(sig, buf_lpf1_0, buf_lpf1_90, pll_buf0, buf_y9, pll_buf90, buf_y10):
+def to_plot(sig, buf_lpf1_0, buf_lpf1_90, pll_buf0, buf_y9, pll_buf90, buf_y10, pll_err_buf0):
 
     ax1 = plt.subplot(511)
     ax2 = plt.subplot(512, sharex=ax1)
@@ -29,6 +29,9 @@ def to_plot(sig, buf_lpf1_0, buf_lpf1_90, pll_buf0, buf_y9, pll_buf90, buf_y10):
 
     ax4.plot(td,pll_buf90)
     ax4.plot(td,buf_y10)
+    #ax4.grid(True)
+
+    ax5.plot(td,pll_err_buf0)
     #ax4.grid(True)
 
     plt.show()
