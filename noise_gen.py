@@ -14,8 +14,3 @@ def proc_noise(N):
         series[i] = series[i]*A
     return series
 
-#N = 1000
-
-#a = proc_noise(N)
-#print (len(a))
-#print(a)

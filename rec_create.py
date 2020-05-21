@@ -2,21 +2,13 @@
 import IIR2Filter
 # from FIR2Filter import *
 from alsen_rx import alsen_rx
-from alsen_gen2 import proc_alsen
 from pll2 import pll2
 from decode import decode
-from noise_gen import proc_noise
-from rms import rms
 from const import fs, Fs, D, t, A_input, td, T
-from rec_create import*
-
 
 # создание узлов приемника
 # *--------------------------------------------------------------------------
 rx = alsen_rx()      # экземпляр приемника
-rx.Fcar = 174.89     # частота несущей
-rx.fs = fs           # частота дискретизации
-rx.bit_rate = 12.89  # скорость передачи данных
 
 # фильтр-интегратор канала 0
 flt_iir1 = IIR2Filter.IIR2Filter(4, [13], 'low', design='cheby1', rs=1, fs=fs)
