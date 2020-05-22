@@ -10,7 +10,7 @@ class decode(object):
         self.res = 0
         self.base = 0
 
-    def procNew(self,bit,ABase):
+    def procNew(self,bit):
         '''Сравнение битовой последовательности '''
         
         self.string.insert(8, bit)
@@ -34,8 +34,8 @@ class decode(object):
             self.res = 0
             self.base = 0xff
 
-        if self.base != ABase:
-            self.res = 0
+        #if self.base != ABase:
+        #    self.res = 0
 
         return self.res, s, hex(self.byte % 256), hex(self.base)
 

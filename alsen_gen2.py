@@ -36,7 +36,7 @@ def proc_alsen(Fs, N, Code_alsen1, Code_alsen2):
             phase = phase + d_phase
             if phase > 2*np.pi:
                 phase -= 2*np.pi
-            print (diBit,Byte1,Byte2,phase)
+            #print (diBit,Byte1,Byte2,phase)
             Byte1=Byte1<<1
             Byte2=Byte2<<1
             count_bit=count_bit-1
