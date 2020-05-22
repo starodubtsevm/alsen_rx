@@ -132,68 +132,28 @@ for i in range(len(t)):  # главный цикл приемника
 # Декодеры (прием байтов)
         if sync0 == 1:
             counter_total += 1
-            dec0,s0,byte,base = decoder0.procNew(bit0)
-            # выходной сигнал декодера канала 0
-            #print_buff0.append(str('{:.2f}'.format(1.0/fs * i)))
-            #print_buff0.append(str(s0))
+            dec0,s0,byte,base,data = decoder0.procNew(bit0)
             if dec0 == 1:
                 if first_suc_byte_flag == 0:
                     t_reaction = 1/fs * i
                     first_suc_byte_flag = 1
                 counter_suc += 1
-                '''
-                print('{}c. кан0 :{} Code: {} Byte: {}; Base: {} {}'.format(str('{:.2f}'.format(1.0/fs * i)),
-                                                                   str(s0),
-                                                                   str(hex(Code_alsen2)),
-                                                                   str(byte),
-                                                                   str(base),
-                                                                   "\x1b[32m  ok!  \x1b[0m"))
-                '''                                                  
-                print('{} c. кан0 : Rx_Byte : {}  Base : {} '.format(str('{:.2f}'.format(1.0/fs * i)),
+                print('{} c. кан0 : Rx_Byte : {}  Base : {}  Data : {}'.format(str('{:.3f}'.format(1.0/fs * i)),
                                                                      str(byte),
-                                                                     str(base)))
-                                                                 
-            else:
-                '''
-                print('{}c. кан0 :{} Code: {} Byte: {}; Base: {} {}'.format(str('{:.2f}'.format(1.0 / fs * i)),
-                                                                str(s0),
-                                                                str(hex(Code_alsen2)),
-                                                                str(byte),
-                                                                str(base),
-                                                                "\x1b[31m not ok \x1b[0m"))
-                '''                                                
-        if sync90 == 1:
+                                                                     str(base),
+                                                                     data))
             counter_total2 += 1
-            dec90,s90,byte,base = decoder90.procNew(bit90)
-            # выходной сигнал декодера канала 90
-            #print_buff90.append(str('{:.2f}'.format(1.0/fs * i)))
-            #print_buff90.append(str(s90))
+            dec90,s90,byte,base,data = decoder90.procNew(bit90)
             if dec90 == 1:
                 if first_suc_byte_flag2 == 0:
                     t_reaction2 = 1/fs * i
                     first_suc_byte_flag2 = 1
                 counter_suc2 += 1
-                '''
-                print('{}c. кан90:{} Code: {} Byte: {}; Base: {} {}'.format(str('{:.2f}'.format(1.0 / fs * i)),
-                                                                   str(s90),
-                                                                   str(hex(Code_alsen1)),
+                print('{} c. кан90 : Rx_Byte: {} Base : {}  Data : {}'.format(str('{:.3f}'.format(1.0/fs * i)),
                                                                    str(byte),
                                                                    str(base),
-                                                                   "\x1b[32m  ok!  \x1b[0m"))
-                '''                                                   
-                print('{} c. кан90 : Rx_Byte: {} Base : {} '.format(str('{:.2f}'.format(1.0/fs * i)),
-                                                                   str(byte),
-                                                                   str(base)))
-                                                                   
-            else:
-                '''
-                print('{}c. кан90:{} Code: {} Byte: {}; Base: {} {}'.format(str('{:.2f}'.format(1.0 / fs * i)),
-                                                                   str(s90),
-                                                                   str(hex(Code_alsen1)),
-                                                                   str(byte),
-                                                                   str(base),
-                                                                   "\x1b[31m not ok \x1b[0m"))
-                '''                                                       
+                                                                   data))
+
 # *--------------------------------------------------------------------------
 
 time1 = (time.process_time() - start_time1)

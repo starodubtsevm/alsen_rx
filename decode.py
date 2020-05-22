@@ -9,14 +9,15 @@ class decode(object):
         self.byte = 0
         self.res = 0
         self.base = 0
+        self.data = 0
 
     def procNew(self,bit):
         '''Сравнение битовой последовательности '''
-        
+
         self.string.insert(8, bit)
         self.string.pop(0)
         s = self.string
-        
+
         self.byte = self.byte << 1
                                          # { 
         if bit == 1:                     # { входящие биты в байт
@@ -30,6 +31,7 @@ class decode(object):
         try:
             index = int(bauerCodeFullArray.index(self.byte % 256) / 8)
             self.base = bauerCode[index]
+            self.data = indicCode[index]
         except Exception:
             self.res = 0
             self.base = 0xff
@@ -37,7 +39,7 @@ class decode(object):
         #if self.base != ABase:
         #    self.res = 0
 
-        return self.res, s, hex(self.byte % 256), hex(self.base)
+        return self.res, s, hex(self.byte % 256), hex(self.base), self.data
 
     def proc(self,bit,ABase):
         '''Сравнение битовой последовательности '''

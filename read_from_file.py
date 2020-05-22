@@ -14,7 +14,7 @@ def read_from_file():
             lines.append(float(l))
 #        print (lines)
 
-        for i in range (3*8000):
+        for i in range (5*8000):
             y_res.append(lines[i])
 #    print (len(y_res))
     return y_res
