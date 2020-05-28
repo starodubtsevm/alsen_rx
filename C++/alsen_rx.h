@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <vector>
+#include "alsenConst.h"
 
 class alsen_rx
 {
@@ -20,8 +21,8 @@ public:
      */
     explicit alsen_rx(const uint   ADeskrFreq,
                       const double AAmplitude = 1.0,
-                      const double ABitRate = 12.89,
-                      const double AFCar = 174.89,
+                      const double ABitRate = BITRATE,
+                      const double AFCar = CARFREQ,
                       const uint   ADecimFactor = 10);
     /*!
      * \brief sgn

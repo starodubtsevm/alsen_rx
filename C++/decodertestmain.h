@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QVector>
 #include "ChartsViewForm.h"
+#include <QAudioInput>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class DecoderTestMain; }
@@ -18,8 +19,13 @@ public:
     ~DecoderTestMain();
 
 public slots:
+    void onEnterSampleProc(const double ASample);
+
     void onCodeDetect0proc(const quint8 ACode0, const quint8 AGroup0);
     void onCodeDetect90proc(const quint8 ACode90, const quint8 AGroup90);
+
+    void onCodeDetect(const quint8 ACode0, const quint8 AGroup0,
+                      const quint8 ACode90, const quint8 AGroup90);
 
     void onAfterGenProc(const double AValue0,
                         const double AValue90);
@@ -46,8 +52,18 @@ private slots:
     void on_pbLogClear_clicked();
     void on_pbStart_clicked();
 
+    void on_cmbAudioInputList_currentIndexChanged(int index);
+
+    void on_pbStopRecord_clicked();
+
 private:
     Ui::DecoderTestMain *ui;
+
+    QList<QAudioDeviceInfo>  FAudioDeviceList;
+    QAudioDeviceInfo         FAudioInfoCurrent;
+    QAudioFormat *           FAudioFormat;
+    bool                     FRecordRun;
+
     void addMessageToLog(const QString AMessage);
 
     ChartsViewForm  FViewForm;

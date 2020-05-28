@@ -9,7 +9,7 @@ alsen_rx::alsen_rx(const uint   ADeskrFreq,
     : Fcar(AFCar),          // несущая АЛС-ЕН
       bit_rate(ABitRate),   // скорость передачи Гц (Bod)
       fs(ADeskrFreq),       // частота дискретизации
-      Ampl(1),//AAmplitude),
+      Ampl(AAmplitude),
       k(2 * cos(2 * M_PI * Fcar / fs)),
 
       X0_0(0.0),
@@ -26,13 +26,7 @@ alsen_rx::alsen_rx(const uint   ADeskrFreq,
       data0(buff_size),
       data90(buff_size)
 {
-    //std::cout << Fcar << std::endl;
-    //std::cout << bit_rate << std::endl;
-    //std::cout << fs << std::endl;
-    //std::cout << k << std::endl;
-    //std::cout << X2_0 << std::endl;
-    //std::cout << X2_90 << std::endl;
-    //std::cout << buff_size << std::endl;
+    //Q_UNUSED(AAmplitude)
 }
 
 int alsen_rx::sgn(const double sample) const
@@ -60,8 +54,8 @@ void alsen_rx::local_gen()
        cycle_count = 13;
     }
 
-    FResult.first = /*Ampl * sinf64(cycle_count * 2 * M_PI * Fcar / fs + 3 * M_PI/2);*/y_0;
-    FResult.second = /*Ampl * sinf64(cycle_count * 2 * M_PI * Fcar / fs + M_PI);// + 3 * M_PI/2);*/y_90;
+    FResult.first = y_0;
+    FResult.second = y_90;
 }
 
 double alsen_rx::mux1(const double gen, const double x) const

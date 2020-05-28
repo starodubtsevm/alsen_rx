@@ -15,11 +15,11 @@ class ALSENSignalDecoder;
 class ALSENSignalIODevice : public QIODevice
 {
 public:
-    explicit ALSENSignalIODevice(IDigitalFilter & AViewFilter,
-                                 IDigitalFilter & AWorkFilter,
+    explicit ALSENSignalIODevice(//IDigitalFilter & AViewFilter,
+                                 //IDigitalFilter & AWorkFilter,
                                  ALSENSignalDecoder & ADecoder,
-                                 ChartViewDinamicForm * seriesFiltred = nullptr,
-                                 ChartViewDinamicForm * seriesSource = nullptr,
+                                 //ChartViewDinamicForm * seriesFiltred = nullptr,
+                                 //ChartViewDinamicForm * seriesSource = nullptr,
                                  QObject *        parent = nullptr);
 
     /*!
@@ -37,12 +37,12 @@ public:
      * \brief Range - ширина "окна" для отображения графика в количестве отсчетов
      * \return - значение ширины
      */
-    qint64 Range() const { return  FRange; }
+    //qint64 Range() const { return  FRange; }
     /*!
      * \brief Range  - установка ширины "окна" для отображения графика в количестве отсчетов
      * \param ARange - значение ширины
      */
-    void Range(const qint64 ARange) { FRange = ARange; }
+    //void Range(const qint64 ARange) { FRange = ARange; }
 
     /*!
      * \brief clearData - очистка "динамических" данных - не касается параметров порога, частоты дискретизации
@@ -58,12 +58,12 @@ protected:
     qint64 readData(char * data, qint64 maxSize);
     qint64 writeData(const char * data, qint64 maxSize);
 private:
-    ChartViewDinamicForm * FChartSeries;
-    ChartViewDinamicForm * FChartSeries1;
+    //ChartViewDinamicForm * FChartSeries;
+    //ChartViewDinamicForm * FChartSeries1;
     bool                   FStopped;
-    qint64                 FRange;
-    IDigitalFilter &       FViewFilter;
-    IDigitalFilter &       FWorkFilter;
+    //qint64                 FRange;
+    //IDigitalFilter &       FViewFilter;
+    //IDigitalFilter &       FWorkFilter;
     ALSENSignalDecoder &   FDecoder;
 
     /*!
@@ -71,13 +71,13 @@ private:
      * \param data - указатель на буфер отсчетов
      * \param maxSize - количество отсчетов в буфере
      */
-    void showChart(const char * data, qint64 maxSize);
+    //void showChart(const char * data, qint64 maxSize);
     /*!
      * \brief showSourceChart - метод отвечает за отрисовку исходного сигнала
      * \param data - указатель на буфер отсчетов
      * \param maxSize - количество отсчетов в буфере
      */
-    void showSourceChart(const char * data, qint64 maxSize);
+    //void showSourceChart(const char * data, qint64 maxSize);
     /*!
      * \brief processSignal - метод производящий основную обработку сигнала
      * \param data - указатель на буфер отсчетов

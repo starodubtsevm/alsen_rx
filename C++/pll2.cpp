@@ -24,21 +24,8 @@ pll2::pll2(const uint   ADeskrFreq,
 
 void pll2::proc(uint16 ASample, bool receiveFlag)
 {
-    //sample = ASample;
     frontDet = frontDet << 1;
     frontDet |= ASample;
-
-//    printf( "------------------------\n" );
-//    printf( "corr: %d\n", corr );
-//    printf( "proc_cnt: %d\n", proc_cnt );
-//    printf( "sample: %d\n", ASample );
-//    printf( "syncCount: %d\n", syncCount );
-//    printf( "phErrCount: %d\n", phErrCount );
-//    printf( "phErr: %d\n", phErr );
-//    printf( "frontDet: %d\n", frontDet );
-//    printf( "lenOfBit: %d\n", lenOfBit );
-//    printf( "syncro: %d\n", syncro );
-//    printf( "\n" );
 
     --syncCount;
 
@@ -61,12 +48,7 @@ void pll2::proc(uint16 ASample, bool receiveFlag)
     else
     {
         //Счётчик периода тактового сигнала истёк
-//        printf( "phErrCount: %d\n", phErrCount );
-//        printf( "lenOfBit: %d\n", lenOfBit );
-//        printf( "sign_moment: %f\n", sign_moment );
         phErr = phErrCount - lenOfBit/sign_moment;
-//        printf( "phErr: %d\n", phErr );
-//        printf( "\n" );
         if( (abs(phErr) >= lenOfBit * 3.0 / 200.0) )
         {
             //Фазовая ошибка 1,5% и более
@@ -74,14 +56,12 @@ void pll2::proc(uint16 ASample, bool receiveFlag)
             {
                 if(receiveFlag)
                 {
-//                    printf( "br1\n" );
                     //Флаг приёма телеграммы есть
                     (phErr < 0) ? syncCount = lenOfBit + corr
                                 : syncCount = lenOfBit - corr;
                 }
                 else
                 {
-//                    printf( "br2\n" );
                     //Флага приёма телеграммы нет
                     //-5 выполняется для исключения ложной
                     syncCount = lenOfBit - 5 - phErr * 1/8;
@@ -89,7 +69,6 @@ void pll2::proc(uint16 ASample, bool receiveFlag)
             }
             else
             {
-//                printf( "br3\n" );
                 //Фазовая ошибка более 1,5%, но менее 6%
                 (phErr < 0) ? syncCount = lenOfBit + 2
                             : syncCount = lenOfBit - 2;
@@ -97,7 +76,6 @@ void pll2::proc(uint16 ASample, bool receiveFlag)
         }
         else
         {
-//            printf( "br4\n" );
             syncCount = lenOfBit; //Фазовая ошибка менее 1,5%
         }
 
@@ -107,15 +85,6 @@ void pll2::proc(uint16 ASample, bool receiveFlag)
         FResult.Syncro = syncro;
         FResult.PhError = phErr;
      }
-
-//    printf( "proc_cnt: %d\n", proc_cnt );
-//    printf( "sample: %d\n", ASample );
-//    printf( "syncCount: %d\n", syncCount );
-//    printf( "phErrCount: %d\n", phErrCount );
-//    printf( "phErr: %d\n", phErr );
-//    printf( "frontDet: %d\n", frontDet );
-//    printf( "lenOfBit: %d\n", lenOfBit );
-//    printf( "syncro: %d\n", syncro );
 
     proc_cnt++;
 }

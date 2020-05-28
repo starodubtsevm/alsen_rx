@@ -2,6 +2,7 @@
 #define PLL2_H
 
 #include <stdint.h>
+#include "alsenConst.h"
 
 /*!
  * \brief Класс pll2 - ФАПЧ
@@ -22,7 +23,7 @@ public:
     pll2(const uint   ADeskrFreq,
          const uint   AScaleFs = 80,
          const double ASignMoment = 4.5, // из main.py вылазит
-         const double ABitRate = 12.89,
+         const double ABitRate = BITRATE,
          const uint   ADecimFactor = 10);
 
     void proc(uint16 ASample, bool receiveFlag = true);

@@ -2,6 +2,7 @@ INCLUDEPATH += $$PWD
 DEPENDPATH  += $$PWD
 
 HEADERS +=  \
+    $$PWD/alsenConst.h \
     $$PWD/alsenSignalGen.h \
     $$PWD/alsenconst.h \
     $$PWD/alsensignaldecoder.h \

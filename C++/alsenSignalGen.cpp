@@ -125,13 +125,7 @@ double alsenSignalGen::genSample()
     }
 
     double v = Iterator * 2 * M_PI * Fcar/FSamplRate + (phase*M_PI)/2;
-    //printf( "%d,%d\n", imp_duty_count, count_bit );
-    //printf( "%.10f\n", phase );
-    //printf( "%.4f\n", v );
     double sample = FAmplitude * sin(v);
-    //printf( "%.4f\n", sample );
-    //TODO if(FIsAddNoise) sample += normal_distribution_noise();
-
     Iterator++;
 
     return sample;
@@ -163,13 +157,13 @@ void alsenSignalGen::BitRate(const double ABitRate)
     initData();
 }
 
-void alsenSignalGen::Code1(const alsenSignalGen::uint8 ACode1)
+void alsenSignalGen::Code90(const alsenSignalGen::uint8 ACode1)
 {
     FCode1 = ACode1;
     initData();
 }
 
-void alsenSignalGen::Code2(const alsenSignalGen::uint8 ACode2)
+void alsenSignalGen::Code0(const alsenSignalGen::uint8 ACode2)
 {
     FCode2 = ACode2;
     initData();

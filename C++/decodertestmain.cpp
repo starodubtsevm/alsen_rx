@@ -4,10 +4,12 @@
 #include "alsenSignalGen.h"
 #include "alsensignaldecoder.h"
 #include "alsensignaliodevice.h"
-#include "digitalfilter.h"
 #include <vector>
 #include <iostream>
 #include <iomanip>
+
+#include <QSignalSpy>
+#include <QTest>
 
 #include <QTimer>
 
@@ -18,16 +20,39 @@
 const quint8 bauerCode[16] = { 0x01, 0x1F, 0x2C, 0x32, 0x4A, 0x54, 0x67, 0x79, 0x86, 0x98, 0xAB, 0xB5, 0xCD, 0xD3, 0xE0, 0xFE };
 
 DecoderTestMain::DecoderTestMain(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::DecoderTestMain)
+    : QMainWindow(parent),
+      ui(new Ui::DecoderTestMain),
+      FAudioFormat(new QAudioFormat)
 {
     ui->setupUi(this);
-    ui->pbStart->click();
+
+    // перечень устройств ввода звука
+    FAudioDeviceList = QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
+    foreach (const QAudioDeviceInfo & deviceInfo, FAudioDeviceList)
+    {
+        if(!deviceInfo.isNull())
+            ui->cmbAudioInputList->addItem(deviceInfo.deviceName());
+    }
+    ui->cmbAudioInputList->setCurrentIndex(0);
+    FAudioInfoCurrent = FAudioDeviceList.at(0);
+
+    FAudioFormat->setSampleRate(8000);
+    FAudioFormat->setChannelCount(1);
+    FAudioFormat->setSampleSize(8);
+    FAudioFormat->setCodec("audio/pcm");
+    FAudioFormat->setByteOrder(QAudioFormat::LittleEndian);
+    FAudioFormat->setSampleType(QAudioFormat::UnSignedInt);
 }
 
 DecoderTestMain::~DecoderTestMain()
 {
+    delete FAudioFormat;
     delete ui;
+}
+
+void DecoderTestMain::onEnterSampleProc(const double ASample)
+{
+    FSamplesVec.push_back(ASample);
 }
 
 void DecoderTestMain::on_pbLogClear_clicked()
@@ -40,27 +65,19 @@ void DecoderTestMain::on_pbStart_clicked()
     ui->pbStart->setEnabled(false);
 
     addMessageToLog("Запуск измерения.");
-    // генератор сигала АЛСЕН
-    alsenSignalGen sigGen;
-    sigGen.Code1(bauerCode[ui->cmbCode1->currentIndex()]);
-    sigGen.Code2(bauerCode[ui->cmbCode2->currentIndex()]);
-    uint CountDuration = ui->spbDuration->value() * sigGen.SamplRate();
 
-    addMessageToLog(QString("Сгенерирован сигнал длительностью %1 с. Количество отсчетов: %2 Код1: %3 Код2: %4")
-                    .arg(ui->spbDuration->value())
-                    .arg(CountDuration)
-                    .arg(QString::number(bauerCode[ui->cmbCode1->currentIndex()],16))
-            .arg(QString::number(bauerCode[ui->cmbCode2->currentIndex()],16)));
+    ALSENSignalDecoder decoder(bauerCode[ui->cmbCode0->currentIndex()],   //Code0
+                               bauerCode[ui->cmbCode90->currentIndex()]); //Code90
 
-    DigitalFilterNoFilter ViewFilter;
-    DigitalFilterNoFilter WorkFilter;
-
-    ALSENSignalDecoder decoder(sigGen.Code2(),sigGen.Code1());
-
+    connect(&decoder,&ALSENSignalDecoder::onEnterSample,
+            this, &DecoderTestMain::onEnterSampleProc);
     connect(&decoder,&ALSENSignalDecoder::onCodeDetect0,
             this, &DecoderTestMain::onCodeDetect0proc);
     connect(&decoder,&ALSENSignalDecoder::onCodeDetect90,
             this, &DecoderTestMain::onCodeDetect90proc);
+    connect(&decoder,&ALSENSignalDecoder::onCodeDetect,
+            this, &DecoderTestMain::onCodeDetect);
+
     connect(&decoder,&ALSENSignalDecoder::onAfterGen,
             this, &DecoderTestMain::onAfterGenProc);
     connect(&decoder,&ALSENSignalDecoder::onAfterMux,
@@ -76,33 +93,92 @@ void DecoderTestMain::on_pbStart_clicked()
     connect(&decoder,&ALSENSignalDecoder::onPll90,
             this, &DecoderTestMain::onPll90Proc);
 
-
-    ALSENSignalIODevice device(ViewFilter,WorkFilter,decoder);
-
-    device.Stopped(false);
-
     clearData();
 
     addMessageToLog("Запуск обработки");
 
-    for(size_t i = 0; i < CountDuration; ++i)
+    ALSENSignalIODevice device(decoder);
+    device.open(QIODevice::WriteOnly);
+    device.Stopped(false);
+
+    if(ui->cbUseAudioInput->isChecked())
     {
-        double Sample = sigGen.genSample();
-        //std::cout << round(Sample) << std::endl;
-        //std::cout << std::setprecision(13) << Sample << std::endl;
-        //printf( "%.4f\n", Sample );
-        FSamplesVec.push_back(Sample);
-        device.writeRAWData(Sample);
+        ui->pbStopRecord->setEnabled(true);
+        FRecordRun = true;
+
+        QSignalSpy spy(&decoder,&ALSENSignalDecoder::onCodeDetect);
+        bool Res = spy.isValid();
+        if(!Res) // не удалось прицепиться
+        {
+            device.close();
+            addMessageToLog("Тест прерван - не удаломсь прицепиться к сигналу");
+            on_pbStopRecord_clicked();
+            return;
+        }
+
+        QAudioInput * FAudioRecorder = new QAudioInput(FAudioInfoCurrent,*FAudioFormat,this);
+        FAudioRecorder->start(&device);
+
+        while (FRecordRun)
+        {
+            bool Res = spy.wait(); // 5000 ms
+            if(!Res) // сигнал не пришел
+            {
+                addMessageToLog("Истек таймаут ожидания сигнала - сигнал не пришел.");
+                continue;
+            }
+
+            // разбираем пришедший сигнал
+            quint8 Code0   = qvariant_cast<quint8>(spy.at(0).at(0));
+            quint8 Group0  = qvariant_cast<quint8>(spy.at(0).at(1));
+            quint8 Code90  = qvariant_cast<quint8>(spy.at(0).at(2));
+            quint8 Group90 = qvariant_cast<quint8>(spy.at(0).at(3));
+
+            addMessageToLog(QString("Пришел сигнал. "
+                               "\n\t\tCode0 = 0x%1; "
+                               "\tGroup0 = 0x%2; "
+                               "\n\t\tCode90 = 0x%3; "
+                               "\tGroup90 = 0x%4")
+                       .arg(QString::number(Code0,16).toUpper())
+                       .arg(QString::number(Group0,16).toUpper())
+                       .arg(QString::number(Code90,16).toUpper())
+                       .arg(QString::number(Group90,16).toUpper()));
+        }
+
+        FAudioRecorder->stop();
+        delete FAudioRecorder;
+        FAudioRecorder = nullptr;
     }
+    else
+    {
+        // генератор сигала АЛСЕН
+        alsenSignalGen sigGen(ui->spbAmplitude->value(),
+                              SAMPLERATE,
+                              ui->dspbCarFreq->value());
+        sigGen.Code90(bauerCode[ui->cmbCode90->currentIndex()]);
+        sigGen.Code0(bauerCode[ui->cmbCode0->currentIndex()]);
+        uint CountDuration = ui->spbDuration->value() * sigGen.SamplRate();
+
+        addMessageToLog(QString("Сгенерирован сигнал длительностью %1 с.;\tКоличество отсчетов: %2; "
+                                "\n\t\t\t\t\t\tКод1: 0x%3;\t\tКод2: 0x%4;")
+                        .arg(ui->spbDuration->value())
+                        .arg(CountDuration)
+                        .arg(QString::number(sigGen.Code90(),16).toUpper())
+                        .arg(QString::number(sigGen.Code0(),16).toUpper()));
+
+        for(size_t i = 0; i < CountDuration; ++i)
+        {
+            device.writeRAWData(sigGen.genSample());
+        }
+        ui->pbStart->setEnabled(true);
+    }
+
+    device.Stopped(true);
+    device.close();
 
     addMessageToLog("Обработка закончена");
 
-    ui->pbStart->setEnabled(true);
-
-    makeAndShowCharts(); // закомментить при выводе в консоль
-
-    //TODO для вывода в консоль быстрого
-    //QTimer::singleShot(200, this, &DecoderTestMain::close);
+    if(ui->cbShowCharts->isChecked()) makeAndShowCharts();
 }
 
 void DecoderTestMain::addMessageToLog(const QString AMessage)
@@ -213,12 +289,26 @@ void DecoderTestMain::makeAndShowCharts()
 
 void DecoderTestMain::onCodeDetect0proc(const quint8 ACode0, const quint8 AGroup0)
 {
-    addMessageToLog(QString("Канал 0: код %1; базовый код %2").arg(QString::number(ACode0,16)).arg(QString::number(AGroup0,16)));
+    addMessageToLog(QString("Канал 0: Код 0x%1; Базовый код 0x%2")
+                    .arg(QString::number(ACode0,16).toUpper())
+                    .arg(QString::number(AGroup0,16).toUpper()));
 }
 
 void DecoderTestMain::onCodeDetect90proc(const quint8 ACode90, const quint8 AGroup90)
 {
-    addMessageToLog(QString("Канал 90: код %1; базовый код %2").arg(QString::number(ACode90,16)).arg(QString::number(AGroup90,16)));
+    addMessageToLog(QString("Канал 90: Код 0x%1; Базовый код 0x%2")
+                    .arg(QString::number(ACode90,16).toUpper())
+                    .arg(QString::number(AGroup90,16).toUpper()));
+}
+
+void DecoderTestMain::onCodeDetect(const quint8 ACode0, const quint8 AGroup0, const quint8 ACode90, const quint8 AGroup90)
+{
+    addMessageToLog(QString("Оба канала. Канал 0: Код 0x%1; Базовый код 0x%2\n"
+                            "\t\t\t Канал 90: Код 0x%3; Базовый код 0x%4")
+                    .arg(QString::number(ACode0,16).toUpper())
+                    .arg(QString::number(AGroup0,16).toUpper())
+                    .arg(QString::number(ACode90,16).toUpper())
+                    .arg(QString::number(AGroup90,16).toUpper()));
 }
 
 void DecoderTestMain::onAfterGenProc(const double AValue0, const double AValue90)
@@ -261,4 +351,16 @@ void DecoderTestMain::onPll90Proc(const uint ASync, const uint ABit)
 {
     FSync90Vec.push_back(ASync);
     FBit90Vec.push_back(ABit);
+}
+
+void DecoderTestMain::on_cmbAudioInputList_currentIndexChanged(int index)
+{
+    FAudioInfoCurrent = FAudioDeviceList.at(index);
+}
+
+void DecoderTestMain::on_pbStopRecord_clicked()
+{
+    FRecordRun = false;
+    ui->pbStart->setEnabled(true);
+    ui->pbStopRecord->setEnabled(false);
 }

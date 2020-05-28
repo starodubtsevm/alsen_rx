@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <random>
+#include "alsenConst.h"
 
 class alsenSignalGen
 {
@@ -12,9 +13,9 @@ public:
     using Samples = std::vector<double>;
 
     alsenSignalGen(const int    AAmplitude = 10000,
-                   const uint   ASamplRate = 8000,
-                   const double ACarrierFrequency = 174.89,
-                   const double ABitRate = 12.89);
+                   const uint   ASamplRate = SAMPLERATE,
+                   const double ACarrierFrequency = CARFREQ,
+                   const double ABitRate = BITRATE);
     virtual ~alsenSignalGen();
 
     void genSignal(Samples & ADestSamples,
@@ -36,11 +37,11 @@ public:
     double BitRate() const { return  FBitRate; }
     void BitRate(const double ABitRate);
 
-    uint8 Code1() const { return FCode1; }
-    void Code1(const uint8 ACode1);
+    uint8 Code90() const { return FCode1; }
+    void Code90(const uint8 ACode1);
 
-    uint8 Code2() const { return FCode2; }
-    void Code2(const uint8 ACode2);
+    uint8 Code0() const { return FCode2; }
+    void Code0(const uint8 ACode2);
 
     bool IsAddNoise() const { return FIsAddNoise; }
     void IsAddNoise(const bool AIsAddNoise) { FIsAddNoise = AIsAddNoise; }
