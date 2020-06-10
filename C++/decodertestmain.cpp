@@ -75,8 +75,8 @@ void DecoderTestMain::on_pbStart_clicked()
             this, &DecoderTestMain::onCodeDetect0proc);
     connect(&decoder,&ALSENSignalDecoder::onCodeDetect90,
             this, &DecoderTestMain::onCodeDetect90proc);
-    connect(&decoder,&ALSENSignalDecoder::onCodeDetect,
-            this, &DecoderTestMain::onCodeDetect);
+//    connect(&decoder,&ALSENSignalDecoder::onCodeDetect,
+//            this, &DecoderTestMain::onCodeDetect);
 
     connect(&decoder,&ALSENSignalDecoder::onAfterGen,
             this, &DecoderTestMain::onAfterGenProc);
@@ -287,29 +287,35 @@ void DecoderTestMain::makeAndShowCharts()
     FViewForm.show();
 }
 
-void DecoderTestMain::onCodeDetect0proc(const quint8 ACode0, const quint8 AGroup0)
+static void display_msg( DecoderTestMain* decoder_test, double time, uint8_t ch, uint8_t code, uint8_t base_code, uint32_t index)
 {
-    addMessageToLog(QString("Канал 0: Код 0x%1; Базовый код 0x%2")
-                    .arg(QString::number(ACode0,16).toUpper())
-                    .arg(QString::number(AGroup0,16).toUpper()));
+    QString s = "%1с Канал: %2 Code: 0x%3 Byte: 0x%4 Base: 0x%5";
+
+    s = s.arg(time,3,'f',2,QChar('0')).arg(ch,2,10,QChar('0')).arg(base_code,2,16,QChar('0')).arg(code,2,16,QChar('0')).arg(bauerCode[index],2,16,QChar('0'));
+
+    decoder_test->addMessageToLog( s );
 }
 
-void DecoderTestMain::onCodeDetect90proc(const quint8 ACode90, const quint8 AGroup90)
+
+void DecoderTestMain::onCodeDetect0proc(const double time, const quint8 ACode0, const quint8 ABaseCode0)
 {
-    addMessageToLog(QString("Канал 90: Код 0x%1; Базовый код 0x%2")
-                    .arg(QString::number(ACode90,16).toUpper())
-                    .arg(QString::number(AGroup90,16).toUpper()));
+    display_msg(this,time,0,ACode0,ABaseCode0,ui->cmbCode0->currentIndex());
 }
 
-void DecoderTestMain::onCodeDetect(const quint8 ACode0, const quint8 AGroup0, const quint8 ACode90, const quint8 AGroup90)
+void DecoderTestMain::onCodeDetect90proc(const double time, const quint8 ACode90, const quint8 ABaseCode90)
 {
-    addMessageToLog(QString("Оба канала. Канал 0: Код 0x%1; Базовый код 0x%2\n"
-                            "\t\t\t Канал 90: Код 0x%3; Базовый код 0x%4")
-                    .arg(QString::number(ACode0,16).toUpper())
-                    .arg(QString::number(AGroup0,16).toUpper())
-                    .arg(QString::number(ACode90,16).toUpper())
-                    .arg(QString::number(AGroup90,16).toUpper()));
+    display_msg(this,time,90,ACode90,ABaseCode90,ui->cmbCode90->currentIndex());
 }
+
+//void DecoderTestMain::onCodeDetect(const quint8 ACode0, const quint8 AGroup0, const quint8 ACode90, const quint8 AGroup90)
+//{
+//    addMessageToLog(QString("Оба канала. Канал 0: Код 0x%1; Базовый код 0x%2\n"
+//                            "\t\t\t Канал 90: Код 0x%3; Базовый код 0x%4")
+//                    .arg(QString::number(ACode0,16).toUpper())
+//                    .arg(QString::number(AGroup0,16).toUpper())
+//                    .arg(QString::number(ACode90,16).toUpper())
+//                    .arg(QString::number(AGroup90,16).toUpper()));
+//}
 
 void DecoderTestMain::onAfterGenProc(const double AValue0, const double AValue90)
 {

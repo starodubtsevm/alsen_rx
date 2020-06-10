@@ -15,261 +15,300 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="0" colspan="3">
-     <widget class="QTextEdit" name="teLog"/>
-    </item>
-    <item row="2" column="0">
-     <spacer name="horizontalSpacer">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+    <item row="0" column="1">
+     <widget class="QPushButton" name="pbStopRecord">
+      <property name="text">
+       <string>Остановить</string>
       </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>665</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
+     </widget>
     </item>
-    <item row="2" column="2">
+    <item row="1" column="6">
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>spbSections</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QSpinBox" name="spbAmplitude">
+      <property name="value">
+       <number>1</number>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="7">
+     <widget class="QSpinBox" name="spbSections">
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="value">
+       <number>5</number>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QPushButton" name="pbStart">
+      <property name="text">
+       <string>Запустить</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="3">
+     <widget class="QDoubleSpinBox" name="dspbCarFreq">
+      <property name="maximum">
+       <double>250.000000000000000</double>
+      </property>
+      <property name="value">
+       <double>174.889999999999986</double>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="0" colspan="8">
      <widget class="QPushButton" name="pbLogClear">
       <property name="text">
        <string>Очистить лог</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="0" colspan="3">
-     <layout class="QHBoxLayout" name="horizontalLayout">
+    <item row="0" column="4">
+     <widget class="QLabel" name="lDuration">
+      <property name="text">
+       <string>Длительность:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="7">
+     <widget class="QCheckBox" name="cbShowCharts">
+      <property name="text">
+       <string>cbShowCharts</string>
+      </property>
+      <property name="checked">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="5">
+     <widget class="QSpinBox" name="spbDuration">
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="value">
+       <number>3</number>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0" colspan="8">
+     <widget class="QTextEdit" name="teLog">
+      <property name="font">
+       <font>
+        <family>Courier New</family>
+       </font>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="5">
+     <widget class="QComboBox" name="cmbCode90">
+      <property name="currentIndex">
+       <number>3</number>
+      </property>
       <item>
-       <widget class="QPushButton" name="pbStart">
-        <property name="text">
-         <string>Запустить</string>
-        </property>
-       </widget>
+       <property name="text">
+        <string>0x01</string>
+       </property>
       </item>
       <item>
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Длительность</string>
-        </property>
-       </widget>
+       <property name="text">
+        <string>0x1F</string>
+       </property>
       </item>
       <item>
-       <widget class="QSpinBox" name="spbDuration">
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="value">
-         <number>3</number>
-        </property>
-       </widget>
+       <property name="text">
+        <string>0x2C</string>
+       </property>
       </item>
       <item>
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Code1</string>
-        </property>
-       </widget>
+       <property name="text">
+        <string>0x32</string>
+       </property>
       </item>
       <item>
-       <widget class="QComboBox" name="cmbCode1">
-        <property name="currentIndex">
-         <number>2</number>
-        </property>
-        <item>
-         <property name="text">
-          <string>0x01</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0x1F</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0x2C</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0x32</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0x4A</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0x54</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0x67</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0x79</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0x86</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0x98</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0xAB</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0xB5</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0xCD</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0xD3</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0xE0</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0xFE</string>
-         </property>
-        </item>
-       </widget>
+       <property name="text">
+        <string>0x4A</string>
+       </property>
       </item>
       <item>
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>Code2</string>
-        </property>
-       </widget>
+       <property name="text">
+        <string>0x54</string>
+       </property>
       </item>
       <item>
-       <widget class="QComboBox" name="cmbCode2">
-        <property name="currentIndex">
-         <number>3</number>
-        </property>
-        <item>
-         <property name="text">
-          <string>0x01</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0x1F</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0x2C</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0x32</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0x4A</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0x54</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0x67</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0x79</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0x86</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0x98</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0xAB</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0xB5</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0xCD</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0xD3</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0xE0</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>0xFE</string>
-         </property>
-        </item>
-       </widget>
+       <property name="text">
+        <string>0x67</string>
+       </property>
       </item>
       <item>
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-       </widget>
+       <property name="text">
+        <string>0x79</string>
+       </property>
       </item>
       <item>
-       <widget class="QSpinBox" name="spbSections">
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="value">
-         <number>5</number>
-        </property>
-       </widget>
+       <property name="text">
+        <string>0x86</string>
+       </property>
       </item>
-     </layout>
+      <item>
+       <property name="text">
+        <string>0x98</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0xAB</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0xB5</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0xCD</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0xD3</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0xE0</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0xFE</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="1" column="4">
+     <widget class="QLabel" name="lcmbCode90">
+      <property name="text">
+       <string>Code90:</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="3">
+     <widget class="QComboBox" name="cmbCode0">
+      <property name="currentIndex">
+       <number>2</number>
+      </property>
+      <item>
+       <property name="text">
+        <string>0x01</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0x1F</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0x2C</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0x32</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0x4A</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0x54</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0x67</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0x79</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0x86</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0x98</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0xAB</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0xB5</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0xCD</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0xD3</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0xE0</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0xFE</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QLabel" name="lcmbCode0">
+      <property name="text">
+       <string>Code0:</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QComboBox" name="cmbAudioInputList"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QCheckBox" name="cbUseAudioInput">
+      <property name="text">
+       <string>cbUseAudioInput</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

@@ -18,14 +18,16 @@ public:
     DecoderTestMain(QWidget *parent = nullptr);
     ~DecoderTestMain();
 
+    void addMessageToLog(const QString AMessage);
+
 public slots:
     void onEnterSampleProc(const double ASample);
 
-    void onCodeDetect0proc(const quint8 ACode0, const quint8 AGroup0);
-    void onCodeDetect90proc(const quint8 ACode90, const quint8 AGroup90);
+    void onCodeDetect0proc(const double time, const quint8 ACode0, const quint8 ABaseCode0);
+    void onCodeDetect90proc(const double time, const quint8 ACode90, const quint8 ABaseCode90);
 
-    void onCodeDetect(const quint8 ACode0, const quint8 AGroup0,
-                      const quint8 ACode90, const quint8 AGroup90);
+//    void onCodeDetect(const quint8 ACode0, const quint8 AGroup0,
+//                      const quint8 ACode90, const quint8 AGroup90);
 
     void onAfterGenProc(const double AValue0,
                         const double AValue90);
@@ -63,8 +65,6 @@ private:
     QAudioDeviceInfo         FAudioInfoCurrent;
     QAudioFormat *           FAudioFormat;
     bool                     FRecordRun;
-
-    void addMessageToLog(const QString AMessage);
 
     ChartsViewForm  FViewForm;
 

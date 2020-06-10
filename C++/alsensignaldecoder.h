@@ -30,10 +30,12 @@ public:
 signals:
     void onEnterSample(const double ASample);
 
-    void onCodeDetect0(const quint8 ACode0,
+    void onCodeDetect0(const double time,
+                       const quint8 ACode0,
                        const quint8 ABaseCode0);
 
-    void onCodeDetect90(const quint8 ACode90,
+    void onCodeDetect90(const double time,
+                        const quint8 ACode90,
                         const quint8 ABaseCode90);
 
     void onCodeDetect(const quint8 ACode0,

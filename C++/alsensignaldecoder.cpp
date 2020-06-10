@@ -36,6 +36,28 @@ ALSENSignalDecoder::~ALSENSignalDecoder()
     delete decoder90;
 }
 
+static void print_res
+(
+        const double time,
+        const uint8_t chan,
+        const decode* decoder,
+        const uint8_t FBaseCode,
+        const char* result
+)
+{
+    printf
+    (
+        "%.2fc. кан%-2d:%s Code: 0x%.2x Byte: 0x%.2x; Base: 0x%.2x %s\n",
+        time,
+        chan,
+        decoder->toString().c_str(),
+        FBaseCode,
+        decoder->Code(),
+        decoder->BaseCode(),
+        result
+    );
+}
+
 void ALSENSignalDecoder::operator()(const double ASample )
 {
     emit onEnterSample(ASample);
@@ -74,15 +96,22 @@ void ALSENSignalDecoder::operator()(const double ASample )
         uint bit90   = pll90->Result().Sample;
         emit onPll90(sync90,bit90);
 
+        double time = FSampleCounter / double(FDescrFreq);
+
         bool Detect0 = false;
         bool Detect90 = false;
         if(sync0 == 1)
         {
             if(decoder0->proc(bit0,FBaseCode0))
             {
-                emit onCodeDetect0(decoder0->Code(),
+                emit onCodeDetect0(time, decoder0->Code(),
                                    decoder0->BaseCode());
                 Detect0 = true;
+                print_res(time,0,decoder0,FBaseCode0,"ok!");
+            }
+            else
+            {
+                print_res(time,0,decoder0,FBaseCode0,"not ok");
             }
         }
 
@@ -90,17 +119,22 @@ void ALSENSignalDecoder::operator()(const double ASample )
         {
             if(decoder90->proc(bit90,FBaseCode90))
             {
-                emit onCodeDetect90(decoder90->Code(),
+                emit onCodeDetect90(time, decoder90->Code(),
                                     decoder90->BaseCode());
                 Detect90 = true;
+                print_res(time,90,decoder90,FBaseCode90,"ok!");
+            }
+            else
+            {
+                print_res(time,90,decoder90,FBaseCode90,"not ok");
             }
         }
 
-        if(Detect0 && Detect90)
-            emit onCodeDetect(decoder0->Code(),
-                              decoder0->BaseCode(),
-                              decoder90->Code(),
-                              decoder90->BaseCode());
+//        if(Detect0 && Detect90)
+//            emit onCodeDetect(decoder0->Code(),
+//                              decoder0->BaseCode(),
+//                              decoder90->Code(),
+//                              decoder90->BaseCode());
     }
     FSampleCounter++;
 }
