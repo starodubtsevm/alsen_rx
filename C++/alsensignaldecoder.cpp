@@ -4,6 +4,8 @@
 
 #include <iostream>
 
+#include <limits>
+
 ALSENSignalDecoder::ALSENSignalDecoder( const uint8_t ABaseCode0,
                                         const uint8_t ABaseCode90,
                                         const quint32 ADescrFreq,
@@ -98,6 +100,25 @@ void ALSENSignalDecoder::operator()(const double ASample )
 
         double time = FSampleCounter / double(FDescrFreq);
 
+        // выводим полученный двубит (антидребезг и првоерка уровня сигнала - вне декодера)
+        if( sync0 == 1 )
+        {
+            // с учётом переполнения
+            auto FSampleCount = 0;
+            if( FSampleCounter >= FSampleCounterLast )
+            {
+                FSampleCount = FSampleCounter - FSampleCounterLast;
+            }
+            else
+            {
+                FSampleCount = FSampleCounter + ( std::numeric_limits<uint64_t>::max() - FSampleCounterLast );
+            }
+
+            emit onCodeDetectBits( FSampleCount, bit0, bit90 );
+
+            FSampleCounterLast = FSampleCounter;
+        }
+
         bool Detect0 = false;
         bool Detect90 = false;
         if(sync0 == 1)
@@ -115,6 +136,7 @@ void ALSENSignalDecoder::operator()(const double ASample )
             }
         }
 
+        //if(sync0 == 1) - проверял работу от одной PLL(ФАПЧ)
         if(sync90 == 1)
         {
             if(decoder90->proc(bit90,FBaseCode90))

@@ -29,6 +29,10 @@ public slots:
 //    void onCodeDetect(const quint8 ACode0, const quint8 AGroup0,
 //                      const quint8 ACode90, const quint8 AGroup90);
 
+    void onCodeDetectBits( const uint64_t sample_count,
+                           const bool bit0,
+                           const bool bit90 );
+
     void onAfterGenProc(const double AValue0,
                         const double AValue90);
 

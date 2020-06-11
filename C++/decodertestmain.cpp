@@ -78,6 +78,9 @@ void DecoderTestMain::on_pbStart_clicked()
 //    connect(&decoder,&ALSENSignalDecoder::onCodeDetect,
 //            this, &DecoderTestMain::onCodeDetect);
 
+    connect(&decoder,&ALSENSignalDecoder::onCodeDetectBits,
+            this, &DecoderTestMain::onCodeDetectBits);
+
     connect(&decoder,&ALSENSignalDecoder::onAfterGen,
             this, &DecoderTestMain::onAfterGenProc);
     connect(&decoder,&ALSENSignalDecoder::onAfterMux,
@@ -316,6 +319,18 @@ void DecoderTestMain::onCodeDetect90proc(const double time, const quint8 ACode90
 //                    .arg(QString::number(ACode90,16).toUpper())
 //                    .arg(QString::number(AGroup90,16).toUpper()));
 //}
+
+void DecoderTestMain::onCodeDetectBits( const uint64_t sample_count,
+                                        const bool bit0,
+                                        const bool bit90 )
+{
+    QString s = "Интервал %1, Бит0: %2, Бит90: %3";
+
+    s = s.arg(sample_count).arg(bit0).arg(bit90);
+
+    std::cout << s.toStdString() << std::endl;
+    addMessageToLog( s );
+}
 
 void DecoderTestMain::onAfterGenProc(const double AValue0, const double AValue90)
 {

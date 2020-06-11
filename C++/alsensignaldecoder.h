@@ -43,6 +43,10 @@ signals:
                       const quint8 ACode90,
                       const quint8 ABaseCode90);
 
+    void onCodeDetectBits( const uint64_t sample_count,
+                           const bool bit0,
+                           const bool bit90 );
+
     void onAfterGen(const double AValue0,
                     const double AValue90);
     void onAfterMux(const double AValue0,
@@ -65,6 +69,7 @@ private:
 
     uint                FDecimFactor;
     uint64_t            FSampleCounter;
+    uint64_t            FSampleCounterLast = 0;
 
 
     alsen_rx          * FAlsenRX;
