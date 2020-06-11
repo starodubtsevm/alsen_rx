@@ -121,10 +121,10 @@ void DecoderTestMain::on_pbStart_clicked()
 
         while (FRecordRun)
         {
-            bool Res = spy.wait(); // 5000 ms
+            bool Res = spy.wait(1000); // 5000 ms  //поставил 1000 чтобы можно было быстрее отключить прослушивание - для удобства простмотра графиков
             if(!Res) // сигнал не пришел
             {
-                addMessageToLog("Истек таймаут ожидания сигнала - сигнал не пришел.");
+                addMessageToLog("Истек таймаут ожидания сигнала - сигнал не пришел."); //< даже при наличии сигнала- это сообщение появляется - не разбирался почему
                 continue;
             }
 
@@ -287,11 +287,11 @@ void DecoderTestMain::makeAndShowCharts()
     FViewForm.show();
 }
 
-static void display_msg( DecoderTestMain* decoder_test, double time, uint8_t ch, uint8_t code, uint8_t base_code, uint32_t index)
+static void display_msg( DecoderTestMain* decoder_test, double time, uint8_t ch, uint8_t code, uint8_t base_code, QString base)
 {
-    QString s = "%1с Канал: %2 Code: 0x%3 Byte: 0x%4 Base: 0x%5";
+    QString s = "%1с Канал: %2 Byte: 0x%4 Code: 0x%3 BaseCode: 0x%5";
 
-    s = s.arg(time,3,'f',2,QChar('0')).arg(ch,2,10,QChar('0')).arg(base_code,2,16,QChar('0')).arg(code,2,16,QChar('0')).arg(bauerCode[index],2,16,QChar('0'));
+    s = s.arg(time,3,'f',2,QChar('0')).arg(ch,2,10,QChar('0')).arg(base_code,2,16,QChar('0')).arg(code,2,16,QChar('0')).arg(base);
 
     decoder_test->addMessageToLog( s );
 }
@@ -299,12 +299,12 @@ static void display_msg( DecoderTestMain* decoder_test, double time, uint8_t ch,
 
 void DecoderTestMain::onCodeDetect0proc(const double time, const quint8 ACode0, const quint8 ABaseCode0)
 {
-    display_msg(this,time,0,ACode0,ABaseCode0,ui->cmbCode0->currentIndex());
+    display_msg(this,time,0,ACode0,ABaseCode0,ui->cmbCode0->currentText());
 }
 
 void DecoderTestMain::onCodeDetect90proc(const double time, const quint8 ACode90, const quint8 ABaseCode90)
 {
-    display_msg(this,time,90,ACode90,ABaseCode90,ui->cmbCode90->currentIndex());
+    display_msg(this,time,90,ACode90,ABaseCode90,ui->cmbCode90->currentText());
 }
 
 //void DecoderTestMain::onCodeDetect(const quint8 ACode0, const quint8 AGroup0, const quint8 ACode90, const quint8 AGroup90)

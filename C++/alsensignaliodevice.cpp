@@ -6,6 +6,8 @@
 
 //#include "ALSENReceiver.h"
 
+#include <QDebug>
+
 ALSENSignalIODevice::ALSENSignalIODevice(ALSENSignalDecoder & ADecoder,
                                          QObject * parent)
    :QIODevice (parent),
@@ -30,6 +32,7 @@ void ALSENSignalIODevice::writeRAWData(const double ASample)
 {
     if (FStopped) return;
     FDecoder(ASample);
+    //qDebug()<<ASample;
 }
 
 qint64 ALSENSignalIODevice::readData(char *data, qint64 maxSize)
@@ -50,6 +53,11 @@ void ALSENSignalIODevice::processSignal(const char * data, qint64 maxSize)
 {
     for(int i = 0; i < maxSize; ++i)
     {
-        FDecoder(data[i] > 0 ? double(data[i]) - 128.0 : double(data[i]) + 128.0 );
+        double ASample = data[i] > 0 ? double(data[i]) - 128.0 : double(data[i]) + 128.0;
+
+        //double ASample = data[i];// / 128.0;
+        //qDebug()<<ASample;
+
+        FDecoder( ASample );
     }
 }

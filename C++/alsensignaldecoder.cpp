@@ -47,13 +47,13 @@ static void print_res
 {
     printf
     (
-        "%.2fc. кан%-2d:%s Code: 0x%.2x Byte: 0x%.2x; Base: 0x%.2x %s\n",
+        "%.2fc. кан%-2d:%s Byte: 0x%.2x Code: 0x%.2x BaseCode: 0x%.2x %s\n",
         time,
         chan,
         decoder->toString().c_str(),
-        FBaseCode,
         decoder->Code(),
         decoder->BaseCode(),
+        FBaseCode,
         result
     );
 }

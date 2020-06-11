@@ -106,14 +106,14 @@ public:
 
         cbShowCharts = new QCheckBox(centralwidget);
         cbShowCharts->setObjectName(QStringLiteral("cbShowCharts"));
-        cbShowCharts->setChecked(false);
+        cbShowCharts->setChecked(true);
 
         gridLayout->addWidget(cbShowCharts, 0, 7, 1, 1);
 
         spbDuration = new QSpinBox(centralwidget);
         spbDuration->setObjectName(QStringLiteral("spbDuration"));
         spbDuration->setMinimum(1);
-        spbDuration->setValue(3);
+        spbDuration->setValue(5);
 
         gridLayout->addWidget(spbDuration, 0, 5, 1, 1);
 
@@ -161,8 +161,8 @@ public:
 
         retranslateUi(DecoderTestMain);
 
-        cmbCode90->setCurrentIndex(3);
-        cmbCode0->setCurrentIndex(2);
+        cmbCode90->setCurrentIndex(2);
+        cmbCode0->setCurrentIndex(3);
 
 
         QMetaObject::connectSlotsByName(DecoderTestMain);
