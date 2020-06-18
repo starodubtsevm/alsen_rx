@@ -1,2 +1,5 @@
+*.stash
 *.pro.user*
 .svn
+ui_*.*
+Makefile

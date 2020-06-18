@@ -15,15 +15,19 @@ public:
     explicit ALSENSignalDecoder(const uint8_t ABaseCode0,
                                 const uint8_t ABaseCode90,
                                 const quint32 ADescrFreq = SAMPLERATE,
-                                const uint   ADecimFactor = 10,
+                                const uint    ADecimFactor = 10,
+                                const bool    AOnlyDvuBit = true,
                                 QObject *parent = nullptr);
     ~ALSENSignalDecoder();
 
-    quint8 Code0() const  { return decoder0->Code(); }
-    quint8 Group0() const { return decoder0->BaseCode(); }
+    quint8 Code0() const;
+    quint8 Group0() const;
 
-    quint8 Code90() const  { return decoder90->Code(); }
-    quint8 Group90() const { return decoder90->BaseCode(); }
+    quint8 Code90() const;
+    quint8 Group90() const;
+
+    bool OnlyDvubit() const { return FOnlyDvubit; }
+    void OnlyDvubit(const bool AOnlyDvubit);
 
     void operator()(const double ASample );
 
@@ -37,11 +41,6 @@ signals:
     void onCodeDetect90(const double time,
                         const quint8 ACode90,
                         const quint8 ABaseCode90);
-
-    void onCodeDetect(const quint8 ACode0,
-                      const quint8 ABaseCode0,
-                      const quint8 ACode90,
-                      const quint8 ABaseCode90);
 
     void onCodeDetectBits( const uint64_t sample_count,
                            const bool bit0,
@@ -79,6 +78,8 @@ private:
     pll2              * pll90;
     decode            * decoder0;
     decode            * decoder90;
+
+    bool                FOnlyDvubit;
 };
 
 #endif // ALSENSIGNALDECODER_H

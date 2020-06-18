@@ -6,10 +6,11 @@
 
 #include <limits>
 
-ALSENSignalDecoder::ALSENSignalDecoder( const uint8_t ABaseCode0,
+ALSENSignalDecoder::ALSENSignalDecoder(const uint8_t  ABaseCode0,
                                         const uint8_t ABaseCode90,
                                         const quint32 ADescrFreq,
-                                        const uint   ADecimFactor,
+                                        const uint    ADecimFactor,
+                                        const bool    AOnlyDvuBit,
                                         QObject *parent)
    :QObject(parent),
     FBaseCode0(ABaseCode0),
@@ -22,9 +23,13 @@ ALSENSignalDecoder::ALSENSignalDecoder( const uint8_t ABaseCode0,
     flt_iir2(new DigitalFilterIIR2(ADescrFreq)),
     pll0(new pll2(ADescrFreq)),
     pll90(new pll2(ADescrFreq)),
-    decoder0(new decode),
-    decoder90(new decode)
+    FOnlyDvubit(AOnlyDvuBit)
 {
+    if(!FOnlyDvubit)
+    {
+        decoder0 = new decode;
+        decoder90 = new decode;
+    }
 }
 
 ALSENSignalDecoder::~ALSENSignalDecoder()
@@ -34,30 +39,50 @@ ALSENSignalDecoder::~ALSENSignalDecoder()
     delete flt_iir2;
     delete pll0;
     delete pll90;
-    delete decoder0;
-    delete decoder90;
+    if(decoder0) delete decoder0;
+    if(decoder90) delete decoder90;
 }
 
-static void print_res
-(
-        const double time,
-        const uint8_t chan,
-        const decode* decoder,
-        const uint8_t FBaseCode,
-        const char* result
-)
+quint8 ALSENSignalDecoder::Code0() const
 {
-    printf
-    (
-        "%.2fc. кан%-2d:%s Byte: 0x%.2x Code: 0x%.2x BaseCode: 0x%.2x %s\n",
-        time,
-        chan,
-        decoder->toString().c_str(),
-        decoder->Code(),
-        decoder->BaseCode(),
-        FBaseCode,
-        result
-    );
+    if(FOnlyDvubit) return 0;
+    return decoder0->Code();
+}
+
+quint8 ALSENSignalDecoder::Group0() const
+{
+    if(FOnlyDvubit) return 0;
+    return decoder0->BaseCode();
+}
+
+quint8 ALSENSignalDecoder::Code90() const
+{
+    if(FOnlyDvubit) return 0;
+    return decoder90->Code();
+}
+
+quint8 ALSENSignalDecoder::Group90() const
+{
+    if(FOnlyDvubit) return 0;
+    return decoder90->BaseCode();
+}
+
+void ALSENSignalDecoder::OnlyDvubit(const bool AOnlyDvubit)
+{
+    if(FOnlyDvubit == AOnlyDvubit) return;
+    FOnlyDvubit = AOnlyDvubit;
+    if(FOnlyDvubit)
+    {
+        if(decoder0) delete decoder0;
+        decoder0 = nullptr;
+        if(decoder90) delete decoder90;
+        decoder90 = nullptr;
+    }
+    else
+    {
+        decoder0 = new decode;
+        decoder90 = new decode;
+    }
 }
 
 void ALSENSignalDecoder::operator()(const double ASample )
@@ -98,65 +123,49 @@ void ALSENSignalDecoder::operator()(const double ASample )
         uint bit90   = pll90->Result().Sample;
         emit onPll90(sync90,bit90);
 
-        double time = FSampleCounter / double(FDescrFreq);
+        double time = FSampleCounter/double(FDescrFreq);
 
-        // выводим полученный двубит (антидребезг и првоерка уровня сигнала - вне декодера)
-        if( sync0 == 1 )
-        {
-            // с учётом переполнения
-            auto FSampleCount = 0;
-            if( FSampleCounter >= FSampleCounterLast )
-            {
-                FSampleCount = FSampleCounter - FSampleCounterLast;
-            }
-            else
-            {
-                FSampleCount = FSampleCounter + ( std::numeric_limits<uint64_t>::max() - FSampleCounterLast );
-            }
-
-            emit onCodeDetectBits( FSampleCount, bit0, bit90 );
-
-            FSampleCounterLast = FSampleCounter;
-        }
-
-        bool Detect0 = false;
-        bool Detect90 = false;
         if(sync0 == 1)
         {
-            if(decoder0->proc(bit0,FBaseCode0))
+            // выводим полученный двубит (антидребезг и првоерка уровня сигнала - вне декодера)
+            // расчет длительности двубита с учётом переполнения
+            auto SampleCount = 0;
+            if( FSampleCounter >= FSampleCounterLast )
             {
-                emit onCodeDetect0(time, decoder0->Code(),
-                                   decoder0->BaseCode());
-                Detect0 = true;
-                print_res(time,0,decoder0,FBaseCode0,"ok!");
+                SampleCount = FSampleCounter - FSampleCounterLast;
             }
             else
             {
-                print_res(time,0,decoder0,FBaseCode0,"not ok");
+                SampleCount = FSampleCounter + (std::numeric_limits<uint64_t>::max() - FSampleCounterLast);
+            }
+
+            emit onCodeDetectBits(SampleCount, bit0, bit90 );
+
+            FSampleCounterLast = FSampleCounter;
+
+            if(!FOnlyDvubit)
+            {
+                if(decoder0->proc(bit0,FBaseCode0))
+                {
+                    emit onCodeDetect0(time,
+                                       decoder0->Code(),
+                                       decoder0->BaseCode());
+                }
             }
         }
 
-        //if(sync0 == 1) - проверял работу от одной PLL(ФАПЧ)
-        if(sync90 == 1)
+        if(!FOnlyDvubit)
         {
-            if(decoder90->proc(bit90,FBaseCode90))
+            if(sync90 == 1)
             {
-                emit onCodeDetect90(time, decoder90->Code(),
-                                    decoder90->BaseCode());
-                Detect90 = true;
-                print_res(time,90,decoder90,FBaseCode90,"ok!");
-            }
-            else
-            {
-                print_res(time,90,decoder90,FBaseCode90,"not ok");
+                if(decoder90->proc(bit90,FBaseCode90))
+                {
+                    emit onCodeDetect90(time,
+                                        decoder90->Code(),
+                                        decoder90->BaseCode());
+                }
             }
         }
-
-//        if(Detect0 && Detect90)
-//            emit onCodeDetect(decoder0->Code(),
-//                              decoder0->BaseCode(),
-//                              decoder90->Code(),
-//                              decoder90->BaseCode());
     }
     FSampleCounter++;
 }
