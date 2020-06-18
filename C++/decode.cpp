@@ -29,7 +29,8 @@ bool decode::proc(decode::uint8 ABit,  const uint8_t CodeAlsen )
     FCode <<= 1; // младший бит в 0
     if (ABit) FCode |= 1; // младший бит в 1
 
-    return IsValid( CodeAlsen );
+    FIsValid = IsValid( CodeAlsen );
+    return FIsValid;
 }
 
 bool decode::IsValid( const uint8_t CodeAlsen )

@@ -36,7 +36,7 @@ DecoderTestMain::DecoderTestMain(QWidget *parent)
     ui->cmbAudioInputList->setCurrentIndex(0);
     FAudioInfoCurrent = FAudioDeviceList.at(0);
 
-    FAudioFormat->setSampleRate(8000);
+    FAudioFormat->setSampleRate(SAMPLERATE);
     FAudioFormat->setChannelCount(1);
     FAudioFormat->setSampleSize(8);
     FAudioFormat->setCodec("audio/pcm");
@@ -66,8 +66,11 @@ void DecoderTestMain::on_pbStart_clicked()
 
     addMessageToLog("Запуск измерения.");
 
-    ALSENSignalDecoder decoder(bauerCode[ui->cmbCode0->currentIndex()],   //Code0
-                               bauerCode[ui->cmbCode90->currentIndex()]); //Code90
+    ALSENSignalDecoder decoder(bauerCode[ui->cmbCode0->currentIndex()],    //Code0
+                               bauerCode[ui->cmbCode90->currentIndex()]);  //Code90
+                               //SAMPLERATE,
+                               //10,
+                               //true);
 
     connect(&decoder,&ALSENSignalDecoder::onEnterSample,
             this, &DecoderTestMain::onEnterSampleProc);
@@ -75,11 +78,12 @@ void DecoderTestMain::on_pbStart_clicked()
             this, &DecoderTestMain::onCodeDetect0proc);
     connect(&decoder,&ALSENSignalDecoder::onCodeDetect90,
             this, &DecoderTestMain::onCodeDetect90proc);
-//    connect(&decoder,&ALSENSignalDecoder::onCodeDetect,
-//            this, &DecoderTestMain::onCodeDetect);
 
-    connect(&decoder,&ALSENSignalDecoder::onCodeDetectBits,
-            this, &DecoderTestMain::onCodeDetectBits);
+    //connect(&decoder,&ALSENSignalDecoder::onCodeDetectBits,
+    //        this, &DecoderTestMain::onCodeDetectBitsProc);
+
+    connect(&decoder,&ALSENSignalDecoder::onCodeDetect,
+            this, &DecoderTestMain::onCodeDetectProc);
 
     connect(&decoder,&ALSENSignalDecoder::onAfterGen,
             this, &DecoderTestMain::onAfterGenProc);
@@ -132,20 +136,23 @@ void DecoderTestMain::on_pbStart_clicked()
             }
 
             // разбираем пришедший сигнал
-            quint8 Code0   = qvariant_cast<quint8>(spy.at(0).at(0));
-            quint8 Group0  = qvariant_cast<quint8>(spy.at(0).at(1));
-            quint8 Code90  = qvariant_cast<quint8>(spy.at(0).at(2));
-            quint8 Group90 = qvariant_cast<quint8>(spy.at(0).at(3));
+            quint64 len    = qvariant_cast<quint8>(spy.at(0).at(0));
+            quint8 Code0   = qvariant_cast<quint8>(spy.at(0).at(1));
+            quint8 Group0  = qvariant_cast<quint8>(spy.at(0).at(2));
+            quint8 Code90  = qvariant_cast<quint8>(spy.at(0).at(3));
+            quint8 Group90 = qvariant_cast<quint8>(spy.at(0).at(4));
 
             addMessageToLog(QString("Пришел сигнал. "
                                "\n\t\tCode0 = 0x%1; "
                                "\tGroup0 = 0x%2; "
                                "\n\t\tCode90 = 0x%3; "
-                               "\tGroup90 = 0x%4")
-                       .arg(QString::number(Code0,16).toUpper())
-                       .arg(QString::number(Group0,16).toUpper())
-                       .arg(QString::number(Code90,16).toUpper())
-                       .arg(QString::number(Group90,16).toUpper()));
+                               "\tGroup90 = 0x%4"
+                               "\tДлительность: %5 с")
+                       .arg(QString::number(Code0,16).toUpper().leftJustified(2,'0'))
+                       .arg(QString::number(Group0,16).toUpper().leftJustified(2,'0'))
+                       .arg(QString::number(Code90,16).toUpper().leftJustified(2,'0'))
+                       .arg(QString::number(Group90,16).toUpper().leftJustified(2,'0'))
+                       .arg((len * 1.0/SAMPLERATE),6,'f',4,QChar('0')));
         }
 
         FAudioRecorder->stop();
@@ -166,8 +173,8 @@ void DecoderTestMain::on_pbStart_clicked()
                                 "\n\t\t\t\t\t\tКод1: 0x%3;\t\tКод2: 0x%4;")
                         .arg(ui->spbDuration->value())
                         .arg(CountDuration)
-                        .arg(QString::number(sigGen.Code90(),16).toUpper())
-                        .arg(QString::number(sigGen.Code0(),16).toUpper()));
+                        .arg(QString::number(sigGen.Code90(),16).toUpper().leftJustified(2,'0'))
+                        .arg(QString::number(sigGen.Code0(),16).toUpper().leftJustified(2,'0')));
 
         for(size_t i = 0; i < CountDuration; ++i)
         {
@@ -292,13 +299,13 @@ void DecoderTestMain::makeAndShowCharts()
 
 static void display_msg( DecoderTestMain* decoder_test, double time, uint8_t ch, uint8_t code, uint8_t base_code, QString base)
 {
-    QString s = "%1с Канал: %2 Byte: 0x%4 Code: 0x%3 BaseCode: 0x%5";
-
-    s = s.arg(time,3,'f',2,QChar('0')).arg(ch,2,10,QChar('0')).arg(base_code,2,16,QChar('0')).arg(code,2,16,QChar('0')).arg(base);
-
-    decoder_test->addMessageToLog( s );
+    decoder_test->addMessageToLog(QString("Время: %1 с;\t Канал: %2;\t Code: 0x%3;\t Base: 0x%4;\t\t Запрашиваемый код: %5")
+                                   .arg(time,3,'f',2,QChar('0'))
+                                   .arg(ch,2,10,QChar('0'))
+                                   .arg(base_code,2,16,QChar('0'))
+                                   .arg(code,2,16,QChar('0'))
+                                   .arg(base));
 }
-
 
 void DecoderTestMain::onCodeDetect0proc(const double time, const quint8 ACode0, const quint8 ABaseCode0)
 {
@@ -310,26 +317,28 @@ void DecoderTestMain::onCodeDetect90proc(const double time, const quint8 ACode90
     display_msg(this,time,90,ACode90,ABaseCode90,ui->cmbCode90->currentText());
 }
 
-//void DecoderTestMain::onCodeDetect(const quint8 ACode0, const quint8 AGroup0, const quint8 ACode90, const quint8 AGroup90)
-//{
-//    addMessageToLog(QString("Оба канала. Канал 0: Код 0x%1; Базовый код 0x%2\n"
-//                            "\t\t\t Канал 90: Код 0x%3; Базовый код 0x%4")
-//                    .arg(QString::number(ACode0,16).toUpper())
-//                    .arg(QString::number(AGroup0,16).toUpper())
-//                    .arg(QString::number(ACode90,16).toUpper())
-//                    .arg(QString::number(AGroup90,16).toUpper()));
-//}
-
-void DecoderTestMain::onCodeDetectBits( const uint64_t sample_count,
-                                        const bool bit0,
-                                        const bool bit90 )
+void DecoderTestMain::onCodeDetectBitsProc( const uint64_t sample_count,
+                                            const bool bit0,
+                                            const bool bit90 )
 {
-    QString s = "Интервал %1, Бит0: %2, Бит90: %3";
+    addMessageToLog(QString("Получены биты. Интервал %1,\t Бит0: %2;\t Бит90: %3")
+                    .arg(sample_count)
+                    .arg(bit0 ? 1 : 0)
+                    .arg(bit90 ? 1 : 0));
+}
 
-    s = s.arg(sample_count).arg(bit0).arg(bit90);
-
-    std::cout << s.toStdString() << std::endl;
-    addMessageToLog( s );
+void DecoderTestMain::onCodeDetectProc(const quint64 sample_count,
+                                       const quint8 ACode0,
+                                       const quint8 ABaseCode0,
+                                       const quint8 ACode90,
+                                       const quint8 ABaseCode90)
+{
+    addMessageToLog(QString("Получены коды. Code0: 0x%1;\t Base0: 0x%2;\t Code90: 0x%3;\t Base90: 0x%4\t Длительность: %5 c")
+                            .arg(ACode0,2,16,QChar('0'))
+                            .arg(ABaseCode0,2,16,QChar('0'))
+                            .arg(ACode90,2,16,QChar('0'))
+                            .arg(ABaseCode90,2,16,QChar('0'))
+                            .arg((sample_count * 1.0/SAMPLERATE),6,'f',4,QChar('0')));
 }
 
 void DecoderTestMain::onAfterGenProc(const double AValue0, const double AValue90)

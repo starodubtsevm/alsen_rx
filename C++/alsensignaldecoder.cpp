@@ -6,10 +6,10 @@
 
 #include <limits>
 
-ALSENSignalDecoder::ALSENSignalDecoder(const uint8_t  ABaseCode0,
-                                        const uint8_t ABaseCode90,
+ALSENSignalDecoder::ALSENSignalDecoder(const quint8   ABaseCode0,
+                                        const quint8  ABaseCode90,
                                         const quint32 ADescrFreq,
-                                        const uint    ADecimFactor,
+                                        const quint32 ADecimFactor,
                                         const bool    AOnlyDvuBit,
                                         QObject *parent)
    :QObject(parent),
@@ -23,13 +23,13 @@ ALSENSignalDecoder::ALSENSignalDecoder(const uint8_t  ABaseCode0,
     flt_iir2(new DigitalFilterIIR2(ADescrFreq)),
     pll0(new pll2(ADescrFreq)),
     pll90(new pll2(ADescrFreq)),
+    decoder0(new decode),
+    decoder90(new decode),
     FOnlyDvubit(AOnlyDvuBit)
 {
-    if(!FOnlyDvubit)
-    {
-        decoder0 = new decode;
-        decoder90 = new decode;
-    }
+    // для составления кода из пришедших бит
+    //connect(this, & ALSENSignalDecoder::onCodeDetectBits,
+    //        this, & ALSENSignalDecoder::onCodeDetectBitsProc);
 }
 
 ALSENSignalDecoder::~ALSENSignalDecoder()
@@ -69,20 +69,7 @@ quint8 ALSENSignalDecoder::Group90() const
 
 void ALSENSignalDecoder::OnlyDvubit(const bool AOnlyDvubit)
 {
-    if(FOnlyDvubit == AOnlyDvubit) return;
     FOnlyDvubit = AOnlyDvubit;
-    if(FOnlyDvubit)
-    {
-        if(decoder0) delete decoder0;
-        decoder0 = nullptr;
-        if(decoder90) delete decoder90;
-        decoder90 = nullptr;
-    }
-    else
-    {
-        decoder0 = new decode;
-        decoder90 = new decode;
-    }
 }
 
 void ALSENSignalDecoder::operator()(const double ASample )
@@ -127,30 +114,34 @@ void ALSENSignalDecoder::operator()(const double ASample )
 
         if(sync0 == 1)
         {
-            // выводим полученный двубит (антидребезг и првоерка уровня сигнала - вне декодера)
-            // расчет длительности двубита с учётом переполнения
             auto SampleCount = 0;
-            if( FSampleCounter >= FSampleCounterLast )
+            if(FOnlyDvubit)
             {
-                SampleCount = FSampleCounter - FSampleCounterLast;
-            }
-            else
-            {
-                SampleCount = FSampleCounter + (std::numeric_limits<uint64_t>::max() - FSampleCounterLast);
-            }
-
-            emit onCodeDetectBits(SampleCount, bit0, bit90 );
-
-            FSampleCounterLast = FSampleCounter;
-
-            if(!FOnlyDvubit)
-            {
-                if(decoder0->proc(bit0,FBaseCode0))
+                // выводим полученный двубит (антидребезг и првоерка уровня сигнала - вне декодера)
+                // расчет длительности двубита с учётом переполнения
+                if( FSampleCounter >= FSampleCounterLast )
                 {
-                    emit onCodeDetect0(time,
-                                       decoder0->Code(),
-                                       decoder0->BaseCode());
+                    SampleCount = FSampleCounter - FSampleCounterLast;
                 }
+                else
+                {
+                    SampleCount = FSampleCounter + (std::numeric_limits<uint64_t>::max() - FSampleCounterLast);
+                }
+                FSampleCounterLast = FSampleCounter;
+            }
+
+            if(decoder0->proc(bit0,FBaseCode0))
+            {
+                if(!FOnlyDvubit) emit onCodeDetect0(time,
+                                                    decoder0->Code(),
+                                                    decoder0->BaseCode());
+            }
+
+            if(FOnlyDvubit)
+            {
+                decoder90->proc(bit90,FBaseCode90);
+                emit onCodeDetectBits(SampleCount, bit0, bit90 );
+                onCodeDetectBitsProc(SampleCount);
             }
         }
 
@@ -168,4 +159,19 @@ void ALSENSignalDecoder::operator()(const double ASample )
         }
     }
     FSampleCounter++;
+}
+
+void ALSENSignalDecoder::onCodeDetectBitsProc(const quint64 sample_count)
+{
+    static quint64 CodeLenght = 0;
+    CodeLenght += sample_count;
+    if(decoder0->IsValidCode() && decoder90->IsValidCode())
+    {
+        emit onCodeDetect(CodeLenght,
+                          decoder0->Code(),
+                          decoder0->BaseCode(),
+                          decoder90->Code(),
+                          decoder90->BaseCode());
+        CodeLenght = 0;
+    }
 }

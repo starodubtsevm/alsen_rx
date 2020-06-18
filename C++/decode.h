@@ -12,6 +12,7 @@ public:
     decode();
     uint8 Code() const { return FCode; }
     uint8 BaseCode() const { return FBaseCode; }
+    bool  IsValidCode() const { return FIsValid; }
     std::string toString() const;
 
     bool proc(uint8 ABit, const uint8_t CodeAlsen);
@@ -41,6 +42,7 @@ private:
 
     uint8 FCode;
     uint8 FBaseCode;
+    bool  FIsValid;
     bool IsValid(const uint8_t CodeAlsen);
 };
 

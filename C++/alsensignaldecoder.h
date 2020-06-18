@@ -12,10 +12,10 @@ class ALSENSignalDecoder : public QObject
 {
     Q_OBJECT
 public:
-    explicit ALSENSignalDecoder(const uint8_t ABaseCode0,
-                                const uint8_t ABaseCode90,
+    explicit ALSENSignalDecoder(const quint8  ABaseCode0,
+                                const quint8  ABaseCode90,
                                 const quint32 ADescrFreq = SAMPLERATE,
-                                const uint    ADecimFactor = 10,
+                                const quint32 ADecimFactor = 10,
                                 const bool    AOnlyDvuBit = true,
                                 QObject *parent = nullptr);
     ~ALSENSignalDecoder();
@@ -42,9 +42,15 @@ signals:
                         const quint8 ACode90,
                         const quint8 ABaseCode90);
 
-    void onCodeDetectBits( const uint64_t sample_count,
+    void onCodeDetectBits( const quint64 sample_count,
                            const bool bit0,
                            const bool bit90 );
+
+    void onCodeDetect(const quint64 sample_count,
+                      const quint8 ACode0,
+                      const quint8 ABaseCode0,
+                      const quint8 ACode90,
+                      const quint8 ABaseCode90);
 
     void onAfterGen(const double AValue0,
                     const double AValue90);
@@ -62,14 +68,13 @@ signals:
                  const uint ABit);
 
 private:
-    uint8_t             FBaseCode0;
-    uint8_t             FBaseCode90;
-    uint32_t            FDescrFreq;
+    quint8             FBaseCode0;
+    quint8             FBaseCode90;
+    quint32            FDescrFreq;
 
-    uint                FDecimFactor;
-    uint64_t            FSampleCounter;
-    uint64_t            FSampleCounterLast = 0;
-
+    quint32            FDecimFactor;
+    quint64            FSampleCounter;
+    quint64            FSampleCounterLast = 0;
 
     alsen_rx          * FAlsenRX;
     DigitalFilterIIR2 * flt_iir1;
@@ -80,6 +85,8 @@ private:
     decode            * decoder90;
 
     bool                FOnlyDvubit;
+
+    void onCodeDetectBitsProc(const quint64 sample_count);
 };
 
 #endif // ALSENSIGNALDECODER_H
